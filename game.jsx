@@ -137,6 +137,24 @@ class RetroMusic {
 
 const music = new RetroMusic();
 
+// ─── FULLSCREEN (Android / mobile browser) ───────────────────────────────
+function isAndroidBrowser() {
+  return /Android/i.test(navigator.userAgent);
+}
+
+function requestFullscreen() {
+  const el = document.documentElement;
+  const rfs = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+  if (rfs) {
+    rfs.call(el).then(() => {
+      // Try to lock orientation to landscape for better gameplay
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock("landscape").catch(() => {});
+      }
+    }).catch(() => {});
+  }
+}
+
 // ─── ENEMIES ─────────────────────────────────────────────────────────────
 function createEnemies(level) {
   const defs = [
@@ -414,6 +432,7 @@ export default function MarioGame() {
   const startGame = useCallback(() => {
     const g = gs.current; g.score = 0; g.lives = 3;
     music.init(); if (g.musicOn) music.start();
+    if (isAndroidBrowser()) requestFullscreen();
     resetLevel(0);
   }, [resetLevel]);
 
