@@ -432,7 +432,7 @@ export default function MarioGame() {
   const startGame = useCallback(() => {
     const g = gs.current; g.score = 0; g.lives = 3;
     music.init(); if (g.musicOn) music.start();
-    if (isAndroidBrowser()) requestFullscreen();
+    requestFullscreen();
     resetLevel(0);
   }, [resetLevel]);
 
@@ -691,17 +691,19 @@ export default function MarioGame() {
   const btn = (accent) => ({ width: accent ? 72 : 64, height: accent ? 72 : 64, borderRadius: "50%", border: `2px solid ${accent ? "rgba(255,215,0,0.4)" : "rgba(255,255,255,0.3)"}`, background: accent ? "rgba(255,215,0,0.15)" : "rgba(255,255,255,0.12)", color: accent ? "#FFD700" : "#FFF", fontSize: accent ? 14 : 28, fontWeight: accent ? "bold" : "normal", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)", touchAction: "none", userSelect: "none" });
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)", fontFamily: "'Segoe UI', sans-serif", padding: 10, boxSizing: "border-box", overflow: "hidden" }}>
-      <div style={{ position: "relative", width: "100%", maxWidth: GW, borderRadius: 16, overflow: "hidden", boxShadow: "0 0 40px rgba(100,180,255,0.3), 0 8px 32px rgba(0,0,0,0.5)", border: "3px solid rgba(255,255,255,0.15)" }}>
-        <canvas ref={canvasRef} width={GW} height={GH} onClick={handleClick} style={{ display: "block", width: "100%", height: "auto" }} />
-      </div>
-      <div style={{ display: "flex", gap: 12, marginTop: 14, width: "100%", maxWidth: GW, justifyContent: "space-between", alignItems: "center", userSelect: "none" }}>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onTouchStart={tS("touchLeft")} onTouchEnd={tE("touchLeft")} onMouseDown={() => gs.current.touchLeft = true} onMouseUp={() => gs.current.touchLeft = false} onMouseLeave={() => gs.current.touchLeft = false} style={btn(false)}>◀</button>
-          <button onTouchStart={tS("touchRight")} onTouchEnd={tE("touchRight")} onMouseDown={() => gs.current.touchRight = true} onMouseUp={() => gs.current.touchRight = false} onMouseLeave={() => gs.current.touchRight = false} style={btn(false)}>▶</button>
+    <div style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#000", fontFamily: "'Segoe UI', sans-serif", overflow: "hidden" }}>
+      <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <canvas ref={canvasRef} width={GW} height={GH} onClick={handleClick} style={{ display: "block", maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+        <div style={{ position: "absolute", bottom: 20, left: 20, right: 20, display: "flex", justifyContent: "space-between", alignItems: "center", userSelect: "none", pointerEvents: "none" }}>
+          <div style={{ display: "flex", gap: 8, pointerEvents: "auto" }}>
+            <button onTouchStart={tS("touchLeft")} onTouchEnd={tE("touchLeft")} onMouseDown={() => gs.current.touchLeft = true} onMouseUp={() => gs.current.touchLeft = false} onMouseLeave={() => gs.current.touchLeft = false} style={btn(false)}>◀</button>
+            <button onTouchStart={tS("touchRight")} onTouchEnd={tE("touchRight")} onMouseDown={() => gs.current.touchRight = true} onMouseUp={() => gs.current.touchRight = false} onMouseLeave={() => gs.current.touchRight = false} style={btn(false)}>▶</button>
+          </div>
+          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, textAlign: "center", pointerEvents: "none" }}>{ui.gameState === "playing" && ui.levelName}</div>
+          <div style={{ pointerEvents: "auto" }}>
+            <button onTouchStart={tS("touchJump")} onTouchEnd={tE("touchJump")} onMouseDown={() => gs.current.touchJump = true} onMouseUp={() => gs.current.touchJump = false} onMouseLeave={() => gs.current.touchJump = false} style={btn(true)}>SKOK</button>
+          </div>
         </div>
-        <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, textAlign: "center" }}>{ui.gameState === "playing" && ui.levelName}</div>
-        <button onTouchStart={tS("touchJump")} onTouchEnd={tE("touchJump")} onMouseDown={() => gs.current.touchJump = true} onMouseUp={() => gs.current.touchJump = false} onMouseLeave={() => gs.current.touchJump = false} style={btn(true)}>SKOK</button>
       </div>
     </div>
   );
