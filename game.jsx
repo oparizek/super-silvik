@@ -176,6 +176,13 @@ function createEnemies(level) {
       { type: "hippo", x: 100, y: 400, patrolMin: 50, patrolMax: 250, speed: 0.9 },
       { type: "boar", x: 700, y: 404, patrolMin: 600, patrolMax: 770, speed: 2 },
     ],
+    [
+      { type: "boar", x: 300, y: 404, patrolMin: 200, patrolMax: 450, speed: 2.2 },
+      { type: "turtle", x: 550, y: 406, patrolMin: 450, patrolMax: 700, speed: 1.5 },
+      { type: "hippo", x: 150, y: 400, patrolMin: 50, patrolMax: 300, speed: 0.9 },
+      { type: "boar", x: 650, y: 404, patrolMin: 550, patrolMax: 760, speed: 2.0 },
+      { type: "turtle", x: 400, y: 406, patrolMin: 300, patrolMax: 500, speed: 1.7 },
+    ],
   ];
   return (defs[level] || []).map(e => ({ ...e, alive: true, flyingAway: false, flyVx: 0, flyVy: 0, flyRot: 0, dir: 1, frame: Math.random() * 100 }));
 }
@@ -322,6 +329,53 @@ const LEVELS = [
       { x: 400, y: 300, dx: 2, dy: 0, minX: 200, maxX: 600, minY: 300, maxY: 300 },
     ],
   },
+  {
+    name: "Psí les 🐕🌲",
+    bg: "linear-gradient(180deg, #4a6741 0%, #2d5016 30%, #1a3a0e 60%, #0f2b08 100%)",
+    platforms: [
+      { x: 0, y: 440, w: 800, h: 60, color: "#2d4a1e" },
+      { x: 80, y: 360, w: 110, h: 20, color: "#5c3d2e" },
+      { x: 250, y: 310, w: 100, h: 20, color: "#5c3d2e" },
+      { x: 420, y: 260, w: 110, h: 20, color: "#5c3d2e" },
+      { x: 600, y: 320, w: 100, h: 20, color: "#5c3d2e" },
+      { x: 160, y: 210, w: 100, h: 20, color: "#5c3d2e" },
+      { x: 350, y: 160, w: 110, h: 20, color: "#5c3d2e" },
+      { x: 560, y: 190, w: 100, h: 20, color: "#5c3d2e" },
+      { x: 700, y: 140, w: 90, h: 20, color: "#5c3d2e" },
+    ],
+    stars: [
+      { x: 120, y: 320 }, { x: 280, y: 270 }, { x: 460, y: 220 }, { x: 630, y: 280 },
+      { x: 190, y: 170 }, { x: 390, y: 120 }, { x: 590, y: 150 }, { x: 730, y: 100 },
+      { x: 400, y: 400 }, { x: 150, y: 400 },
+    ],
+    eyeExercise: "tracking",
+    movingStars: [
+      { x: 100, y: 120, dx: 2, dy: 0.8, minX: 50, maxX: 400, minY: 80, maxY: 200 },
+      { x: 600, y: 100, dx: -1.5, dy: 1, minX: 400, maxX: 750, minY: 80, maxY: 200 },
+    ],
+    trees: [
+      { x: 40, y: 420, size: 1.3, variant: 0 },
+      { x: 130, y: 420, size: 1.0, variant: 1 },
+      { x: 220, y: 420, size: 1.5, variant: 0 },
+      { x: 340, y: 420, size: 1.1, variant: 1 },
+      { x: 480, y: 420, size: 1.4, variant: 0 },
+      { x: 570, y: 420, size: 1.0, variant: 1 },
+      { x: 660, y: 420, size: 1.3, variant: 0 },
+      { x: 750, y: 420, size: 1.1, variant: 1 },
+      { x: 300, y: 420, size: 0.8, variant: 0 },
+      { x: 520, y: 420, size: 0.9, variant: 1 },
+    ],
+    dogs: [
+      { x: 200, y: 406, patrolMin: 100, patrolMax: 350, speed: 1.0 },
+      { x: 500, y: 406, patrolMin: 400, patrolMax: 650, speed: 1.2 },
+      { x: 680, y: 406, patrolMin: 620, patrolMax: 760, speed: 0.8 },
+    ],
+    fireflies: [
+      { x: 100, y: 80 }, { x: 250, y: 60 }, { x: 400, y: 90 },
+      { x: 550, y: 70 }, { x: 700, y: 85 }, { x: 180, y: 150 },
+      { x: 450, y: 130 }, { x: 650, y: 160 },
+    ],
+  },
 ];
 
 // ─── DRAW HELPERS ────────────────────────────────────────────────────────
@@ -406,14 +460,86 @@ function drawFirefly(ctx, x, y, frame) {
   ctx.restore();
 }
 
+function drawTree(ctx, x, y, size, variant) {
+  const s = size || 1;
+  // trunk
+  ctx.fillStyle = variant === 1 ? "#5D4037" : "#4E342E";
+  ctx.fillRect(x - 6 * s, y - 20 * s, 12 * s, 40 * s);
+  ctx.fillStyle = variant === 1 ? "#3E2723" : "#4E342E";
+  ctx.fillRect(x - 2 * s, y - 20 * s, 4 * s, 40 * s);
+  // foliage layers
+  const colors = variant === 1
+    ? ["#1B5E20", "#2E7D32", "#388E3C"]
+    : ["#0D3B0D", "#1A5C1A", "#2E7D32"];
+  for (let i = 0; i < 3; i++) {
+    ctx.fillStyle = colors[i];
+    ctx.beginPath();
+    ctx.moveTo(x - (28 - i * 6) * s, y - (20 + i * 22) * s);
+    ctx.lineTo(x + (28 - i * 6) * s, y - (20 + i * 22) * s);
+    ctx.lineTo(x, y - (50 + i * 22) * s);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+function drawDog(ctx, x, y, dir, frame, happy) {
+  const bob = Math.sin(frame * 0.12) * 1.5;
+  // body
+  ctx.fillStyle = "#D7A86E";
+  ctx.beginPath(); ctx.ellipse(x + 17, y + 14 + bob, 14, 10, 0, 0, Math.PI * 2); ctx.fill();
+  // belly
+  ctx.fillStyle = "#F5DEB3";
+  ctx.beginPath(); ctx.ellipse(x + 17, y + 18 + bob, 10, 6, 0, 0, Math.PI); ctx.fill();
+  // head
+  ctx.fillStyle = "#C4944A";
+  ctx.beginPath(); ctx.arc(x + (dir > 0 ? 30 : 4), y + 8 + bob, 9, 0, Math.PI * 2); ctx.fill();
+  // ear
+  ctx.fillStyle = "#8B6914";
+  ctx.beginPath(); ctx.ellipse(x + (dir > 0 ? 36 : -2), y + 2 + bob, 4, 7, dir > 0 ? 0.3 : -0.3, 0, Math.PI * 2); ctx.fill();
+  // snout
+  ctx.fillStyle = "#F5DEB3";
+  ctx.beginPath(); ctx.ellipse(x + (dir > 0 ? 37 : -3), y + 12 + bob, 5, 3.5, 0, 0, Math.PI * 2); ctx.fill();
+  // nose
+  ctx.fillStyle = "#333";
+  ctx.beginPath(); ctx.ellipse(x + (dir > 0 ? 40 : -6), y + 11 + bob, 2.5, 2, 0, 0, Math.PI * 2); ctx.fill();
+  // eye
+  ctx.fillStyle = "#FFF";
+  ctx.beginPath(); ctx.arc(x + (dir > 0 ? 32 : 2), y + 6 + bob, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#5D4037";
+  ctx.beginPath(); ctx.arc(x + (dir > 0 ? 33 : 1), y + 6 + bob, 1.8, 0, Math.PI * 2); ctx.fill();
+  // happy mouth
+  if (happy) {
+    ctx.strokeStyle = "#8B4513"; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(x + (dir > 0 ? 37 : -3), y + 13 + bob, 3, 0.1, Math.PI - 0.1); ctx.stroke();
+    // tongue
+    ctx.fillStyle = "#FF8A80";
+    ctx.beginPath(); ctx.ellipse(x + (dir > 0 ? 38 : -4), y + 16 + bob, 2, 3, 0, 0, Math.PI * 2); ctx.fill();
+  }
+  // legs
+  ctx.fillStyle = "#C4944A";
+  const lo = Math.sin(frame * 0.18) * 3;
+  ctx.fillRect(x + 6, y + 22 + bob, 5, 7 + lo);
+  ctx.fillRect(x + 22, y + 22 + bob, 5, 7 - lo);
+  // tail (wagging)
+  const tailWag = Math.sin(frame * 0.25) * 0.6;
+  ctx.save();
+  ctx.strokeStyle = "#C4944A"; ctx.lineWidth = 3; ctx.lineCap = "round";
+  const tailX = dir > 0 ? x + 3 : x + 31;
+  ctx.beginPath();
+  ctx.moveTo(tailX, y + 8 + bob);
+  ctx.quadraticCurveTo(tailX + (dir > 0 ? -10 : 10), y - 2 + bob + Math.sin(tailWag) * 8, tailX + (dir > 0 ? -6 : 6), y - 6 + bob + Math.cos(tailWag) * 6);
+  ctx.stroke();
+  ctx.restore();
+}
+
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────
 export default function MarioGame() {
   const canvasRef = useRef(null);
   const gs = useRef({
     player: { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true },
     keys: {}, frame: 0, score: 0, lives: 3, level: 0,
-    collectedStars: [], collectedMoving: [], particles: [], enemies: [],
-    invincibleTimer: 0, gameState: "menu",
+    collectedStars: [], collectedMoving: [], particles: [], enemies: [], dogs: [],
+    petted: [], invincibleTimer: 0, gameState: "menu",
     touchLeft: false, touchRight: false, touchJump: false, musicOn: true,
   });
   const [ui, setUi] = useState({ score: 0, lives: 3, level: 0, gameState: "menu", levelName: "", musicOn: true });
@@ -424,6 +550,9 @@ export default function MarioGame() {
     g.player = { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true };
     g.level = li; g.collectedStars = []; g.collectedMoving = []; g.particles = [];
     g.enemies = createEnemies(li); g.invincibleTimer = 0; g.gameState = "playing";
+    const lvDogs = LEVELS[li].dogs || [];
+    g.dogs = lvDogs.map(d => ({ ...d, dir: 1, frame: Math.random() * 100, happy: false, happyTimer: 0 }));
+    g.petted = [];
     const lv = LEVELS[li];
     if (lv.movingStars) lv.movingStars.forEach(ms => { ms.x = ms.minX + (ms.maxX - ms.minX) / 2; ms.y = ms.minY + (ms.maxY - ms.minY) / 2; });
     setUi({ score: g.score, lives: g.lives, level: li, gameState: "playing", levelName: lv.name, musicOn: g.musicOn });
@@ -539,6 +668,22 @@ export default function MarioGame() {
           }
         });
 
+        // Dogs (friendly)
+        g.dogs.forEach((dog, i) => {
+          dog.frame++;
+          dog.x += dog.speed * dog.dir;
+          if (dog.x <= dog.patrolMin || dog.x >= dog.patrolMax) dog.dir *= -1;
+          if (dog.happyTimer > 0) dog.happyTimer--;
+          else dog.happy = false;
+
+          if (!g.petted.includes(i) && p.x + PW > dog.x && p.x < dog.x + ENEMY_W && p.y + PH > dog.y && p.y < dog.y + ENEMY_H) {
+            g.petted.push(i); dog.happy = true; dog.happyTimer = 120;
+            g.score += 15; music.playSFX("star");
+            for (let j = 0; j < 6; j++) g.particles.push({ x: dog.x + ENEMY_W / 2, y: dog.y - 5, vx: (Math.random() - 0.5) * 3, vy: -Math.random() * 3 - 1, life: 40, color: ["#FF4081", "#E91E63", "#F48FB1", "#FF80AB"][j % 4] });
+            setUi(prev => ({ ...prev, score: g.score }));
+          }
+        });
+
         g.particles = g.particles.filter(pt => { pt.x += pt.vx; pt.y += pt.vy; pt.life--; return pt.life > 0; });
 
         const total = lv.stars.length + (lv.movingStars ? lv.movingStars.length : 0);
@@ -558,6 +703,7 @@ export default function MarioGame() {
       ctx.fillRect(0, 0, GW, GH);
       if (lv.clouds) lv.clouds.forEach(c => drawCloud(ctx, (c.x + g.frame * 0.2) % (GW + 100) - 50, c.y, c.size));
       if (lv.fireflies) lv.fireflies.forEach(ff => drawFirefly(ctx, ff.x + Math.sin(g.frame * 0.02 + ff.x) * 20, ff.y + Math.cos(g.frame * 0.03 + ff.y) * 15, g.frame));
+      if (lv.trees) lv.trees.forEach(t => drawTree(ctx, t.x, t.y, t.size, t.variant));
 
       if (lv.platforms[0]) {
         ctx.fillStyle = "#2d8c1f";
@@ -582,6 +728,13 @@ export default function MarioGame() {
       });
 
       g.enemies.forEach(en => drawEnemy(ctx, en));
+      g.dogs.forEach(dog => {
+        drawDog(ctx, dog.x, dog.y, dog.dir, dog.frame, dog.happy);
+        if (dog.happy) {
+          ctx.fillStyle = "#FF4081"; ctx.font = "14px sans-serif"; ctx.textAlign = "center";
+          ctx.fillText("\u2764\uFE0F", dog.x + ENEMY_W / 2, dog.y - 10 - Math.sin(dog.frame * 0.1) * 4);
+        }
+      });
       g.particles.forEach(pt => { ctx.save(); ctx.globalAlpha = pt.life / 40; ctx.fillStyle = pt.color; ctx.beginPath(); ctx.arc(pt.x, pt.y, 3 * (pt.life / 40), 0, Math.PI * 2); ctx.fill(); ctx.restore(); });
 
       if (g.gameState === "playing" || g.gameState === "levelComplete")
@@ -616,11 +769,12 @@ export default function MarioGame() {
         ctx.shadowColor = "#FF8F00"; ctx.shadowBlur = 20;
         ctx.fillText("\uD83C\uDF1F Hvězdný Kluk \uD83C\uDF1F", GW / 2, 120); ctx.shadowBlur = 0;
         drawPlayer(ctx, GW / 2 - 18, 145, true, g.frame, false);
-        drawTurtle(ctx, GW / 2 - 100, 200, 1, g.frame);
-        drawBoar(ctx, GW / 2 - 20, 198, -1, g.frame);
-        drawHippo(ctx, GW / 2 + 55, 194, 1, g.frame);
+        drawTurtle(ctx, GW / 2 - 120, 200, 1, g.frame);
+        drawBoar(ctx, GW / 2 - 40, 198, -1, g.frame);
+        drawHippo(ctx, GW / 2 + 35, 194, 1, g.frame);
+        drawDog(ctx, GW / 2 + 100, 196, -1, g.frame, true);
         ctx.fillStyle = "#FFF"; ctx.font = "18px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
-        ctx.fillText("Sbírej \u2B50 a skoč na nepřátele! \uD83E\uDDB6", GW / 2, 265);
+        ctx.fillText("Sbírej \u2B50, skoč na nepřátele a potkej pejsky! \uD83D\uDC36", GW / 2, 265);
         ctx.fillStyle = "#B3E5FC"; ctx.font = "14px 'Segoe UI', sans-serif";
         ctx.fillText("\uD83C\uDFAE Šipky = pohyb   Mezerník = skok   M = hudba", GW / 2, 300);
         ctx.fillText("\uD83D\uDCF1 Dotyková tlačítka dole", GW / 2, 322);
