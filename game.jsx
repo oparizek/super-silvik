@@ -884,7 +884,22 @@ export default function MarioGame() {
         for (let gx = 0; gx < GW; gx += 20) { const gh = 5 + Math.sin(gx * 0.3) * 3; ctx.beginPath(); ctx.moveTo(gx, lv.platforms[0].y); ctx.lineTo(gx + 5, lv.platforms[0].y - gh); ctx.lineTo(gx + 10, lv.platforms[0].y); ctx.fill(); }
       }
       lv.platforms.forEach((pl, i) => {
-        if (pl.breakable && g.brokenBlocks.includes(i)) return;
+        if (pl.breakable && g.brokenBlocks.includes(i)) {
+          // Draw rubble/debris so the player can see the surface is still solid
+          ctx.fillStyle = "#7B3F00";
+          ctx.strokeStyle = "#4a2000";
+          ctx.lineWidth = 0.8;
+          for (let c = 0; c < 4; c++) {
+            const offset = ((i * 17 + c * 31) % Math.max(1, pl.w - 20));
+            const cw = 10 + (i * 7 + c * 11) % 10;
+            const ch = 4 + (i * 3 + c * 7) % 5;
+            const cx = pl.x + offset + 5;
+            const cy = pl.y + pl.h - ch;
+            ctx.fillRect(cx, cy, cw, ch);
+            ctx.strokeRect(cx, cy, cw, ch);
+          }
+          return;
+        }
         if (i === 0) { ctx.fillStyle = pl.color; ctx.fillRect(pl.x, pl.y, pl.w, pl.h); return; }
         if (pl.breakable) {
           // Brick block style
