@@ -43,6 +43,27 @@ class RetroMusic {
       98, 165, 196, 220, 0, 175, 196, 0,
       165, 0, 131, 147, 123, 0, 0, 0,
     ];
+    this.powerMelody = [
+      784, 0, 880, 0, 988, 0, 1047, 0,
+      988, 0, 880, 0, 784, 0, 0, 0,
+      784, 0, 880, 0, 988, 0, 880, 0,
+      784, 660, 784, 0, 0, 0, 0, 0,
+      880, 0, 988, 0, 1047, 0, 1175, 0,
+      1047, 0, 988, 0, 880, 0, 0, 0,
+      880, 0, 988, 0, 1047, 0, 988, 0,
+      880, 784, 880, 0, 0, 0, 0, 0,
+    ];
+    this.powerBass = [
+      196, 0, 220, 0, 247, 0, 262, 0,
+      247, 0, 220, 0, 196, 0, 0, 0,
+      196, 0, 220, 0, 247, 0, 220, 0,
+      196, 165, 196, 0, 0, 0, 0, 0,
+      220, 0, 247, 0, 262, 0, 294, 0,
+      262, 0, 247, 0, 220, 0, 0, 0,
+      220, 0, 247, 0, 262, 0, 247, 0,
+      220, 196, 220, 0, 0, 0, 0, 0,
+    ];
+    this.mode = "normal";
   }
 
   init() {
@@ -65,11 +86,14 @@ class RetroMusic {
   }
 
   scheduler() {
-    const secondsPerBeat = 60.0 / this.tempo / 2;
+    const mel = this.mode === "power" ? this.powerMelody : this.melody;
+    const bas = this.mode === "power" ? this.powerBass : this.bass;
+    const tempo = this.mode === "power" ? this.tempo * 1.3 : this.tempo;
+    const secondsPerBeat = 60.0 / tempo / 2;
     while (this.nextNoteTime < this.ctx.currentTime + 0.1) {
-      const idx = this.currentNote % this.melody.length;
-      this.playNote(this.melody[idx], this.nextNoteTime, secondsPerBeat * 0.8, "square", 0.06);
-      this.playNote(this.bass[idx], this.nextNoteTime, secondsPerBeat * 0.8, "triangle", 0.07);
+      const idx = this.currentNote % mel.length;
+      this.playNote(mel[idx], this.nextNoteTime, secondsPerBeat * 0.8, "square", 0.06);
+      this.playNote(bas[idx], this.nextNoteTime, secondsPerBeat * 0.8, "triangle", 0.07);
       if (this.currentNote % 2 === 0) this.playPercussion(this.nextNoteTime);
       this.nextNoteTime += secondsPerBeat;
       this.currentNote++;
@@ -127,8 +151,17 @@ class RetroMusic {
       o.type = "sawtooth"; o.frequency.setValueAtTime(200, now); o.frequency.exponentialRampToValueAtTime(50, now + 0.3);
       g.gain.setValueAtTime(0.1, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
       o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.31);
+    } else if (type === "mushroom") {
+      [392, 523, 659, 784, 1047].forEach((f, i) => {
+        const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+        o.type = "square"; o.frequency.setValueAtTime(f, now + i * 0.07);
+        g.gain.setValueAtTime(0.09, now + i * 0.07); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.15);
+        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.07); o.stop(now + i * 0.07 + 0.16);
+      });
     }
   }
+
+  setMode(mode) { this.mode = mode; }
 
   start() { this.init(); if (this.playing) return; this.playing = true; this.currentNote = 0; this.nextNoteTime = this.ctx.currentTime; this.timerID = setInterval(() => this.scheduler(), 25); }
   stop() { this.playing = false; if (this.timerID) { clearInterval(this.timerID); this.timerID = null; } }
@@ -284,6 +317,7 @@ const LEVELS = [
       { x: 500, y: 150, dx: 0, dy: 1.5, minX: 500, maxX: 500, minY: 80, maxY: 220 },
     ],
     clouds: [{ x: 100, y: 50, size: 1 }, { x: 350, y: 30, size: 1.3 }, { x: 600, y: 60, size: 0.9 }],
+    mushrooms: [{ x: 210, y: 333 }],
   },
   {
     name: "Kouzelný les 🌲",
@@ -305,6 +339,7 @@ const LEVELS = [
       { x: 200, y: 350, dx: 2, dy: -1, minX: 100, maxX: 400, minY: 250, maxY: 400 },
     ],
     fireflies: [{ x: 150, y: 100 }, { x: 300, y: 80 }, { x: 500, y: 120 }, { x: 650, y: 90 }, { x: 400, y: 200 }, { x: 100, y: 250 }],
+    mushrooms: [{ x: 270, y: 283 }],
   },
   {
     name: "Duhový hrad 🏰",
@@ -328,6 +363,7 @@ const LEVELS = [
       { x: 750, y: 180, dx: -1.5, dy: -1, minX: 50, maxX: 750, minY: 60, maxY: 180 },
       { x: 400, y: 300, dx: 2, dy: 0, minX: 200, maxX: 600, minY: 300, maxY: 300 },
     ],
+    mushrooms: [{ x: 445, y: 223 }],
   },
   {
     name: "Psí les 🐕🌲",
@@ -375,11 +411,40 @@ const LEVELS = [
       { x: 550, y: 70 }, { x: 700, y: 85 }, { x: 180, y: 150 },
       { x: 450, y: 130 }, { x: 650, y: 160 },
     ],
+    mushrooms: [{ x: 135, y: 343 }],
   },
 ];
 
 // ─── DRAW HELPERS ────────────────────────────────────────────────────────
-function drawPlayer(ctx, x, y, facingRight, frame, invincible) {
+function drawMushroom(ctx, x, y, frame) {
+  const bob = Math.sin(frame * 0.06 + x * 0.01) * 3;
+  ctx.save();
+  ctx.shadowColor = "rgba(255,80,80,0.6)"; ctx.shadowBlur = 16;
+  // stem
+  ctx.fillStyle = "#F5DEB3";
+  ctx.beginPath(); ctx.roundRect(x + 8, y + 20 + bob, 16, 14, [2, 2, 4, 4]); ctx.fill();
+  ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(x + 10, y + 21 + bob, 12, 2);
+  // cap
+  ctx.fillStyle = "#D32F2F";
+  ctx.beginPath(); ctx.ellipse(x + 16, y + 20 + bob, 18, 14, 0, Math.PI, 0); ctx.fill();
+  ctx.strokeStyle = "#B71C1C"; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.ellipse(x + 16, y + 20 + bob, 18, 14, 0, Math.PI, 0); ctx.stroke();
+  // white dots
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#FFF";
+  ctx.beginPath(); ctx.arc(x + 9, y + 13 + bob, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 16, y + 8 + bob, 4.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 23, y + 13 + bob, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false) {
+  ctx.save();
+  if (mushroomPower) {
+    const pcx = x + PW / 2, pcy = y + PH / 2;
+    ctx.translate(pcx, pcy); ctx.scale(1.5, 1.5); ctx.translate(-pcx, -pcy);
+    if (Math.floor(frame / 6) % 2 === 0) ctx.globalAlpha = 0.65;
+  }
   const f = facingRight ? 1 : -1;
   const cx = x + PW / 2;
   const bob = Math.sin(frame * 0.15) * 1.5;
@@ -422,7 +487,7 @@ function drawPlayer(ctx, x, y, facingRight, frame, invincible) {
   ctx.beginPath(); ctx.arc(cx + 5.5 + f * 0.5, y + 10 + bob, 0.8, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = "#C62828"; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.arc(cx, y + 14 + bob, 3, 0.1, Math.PI - 0.1); ctx.stroke();
-  ctx.globalAlpha = 1;
+  ctx.restore();
 }
 
 function drawStar(ctx, x, y, size, frame, golden = false) {
@@ -538,8 +603,8 @@ export default function MarioGame() {
   const gs = useRef({
     player: { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true },
     keys: {}, frame: 0, score: 0, lives: 3, level: 0,
-    collectedStars: [], collectedMoving: [], particles: [], enemies: [], dogs: [],
-    petted: [], invincibleTimer: 0, gameState: "menu",
+    collectedStars: [], collectedMoving: [], collectedMushrooms: [], particles: [], enemies: [], dogs: [],
+    petted: [], invincibleTimer: 0, mushroomTimer: 0, gameState: "menu",
     touchLeft: false, touchRight: false, touchJump: false, musicOn: true,
   });
   const [ui, setUi] = useState({ score: 0, lives: 3, level: 0, gameState: "menu", levelName: "", musicOn: true });
@@ -548,8 +613,9 @@ export default function MarioGame() {
   const resetLevel = useCallback((li) => {
     const g = gs.current;
     g.player = { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true };
-    g.level = li; g.collectedStars = []; g.collectedMoving = []; g.particles = [];
-    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.gameState = "playing";
+    g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.particles = [];
+    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.gameState = "playing";
+    music.setMode("normal");
     const lvDogs = LEVELS[li].dogs || [];
     g.dogs = lvDogs.map(d => ({ ...d, dir: 1, frame: Math.random() * 100, happy: false, happyTimer: 0 }));
     g.petted = [];
@@ -682,6 +748,22 @@ export default function MarioGame() {
           }
         });
 
+        // Mushroom power-up timer
+        if (g.mushroomTimer > 0) { g.mushroomTimer--; if (g.mushroomTimer === 0) music.setMode("normal"); }
+
+        // Mushroom collection
+        lv.mushrooms?.forEach((mush, i) => {
+          if (g.collectedMushrooms.includes(i)) return;
+          const dx = p.x + PW / 2 - mush.x, dy = p.y + PH / 2 - mush.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 40) {
+            g.collectedMushrooms.push(i);
+            g.mushroomTimer = 600;
+            music.playSFX("mushroom");
+            if (g.musicOn) music.setMode("power");
+            for (let j = 0; j < 20; j++) g.particles.push({ x: mush.x, y: mush.y, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#D32F2F", "#FF5252", "#FFFFFF", "#FF8A65", "#FFD700"][j % 5] });
+          }
+        });
+
         g.particles = g.particles.filter(pt => { pt.x += pt.vx; pt.y += pt.vy; pt.life--; return pt.life > 0; });
 
         const total = lv.stars.length + (lv.movingStars ? lv.movingStars.length : 0);
@@ -717,6 +799,7 @@ export default function MarioGame() {
         for (let gx = pl.x; gx < pl.x + pl.w; gx += 8) { ctx.beginPath(); ctx.moveTo(gx, pl.y); ctx.lineTo(gx + 3, pl.y - 4); ctx.lineTo(gx + 6, pl.y); ctx.fill(); }
       });
 
+      lv.mushrooms?.forEach((mush, i) => { if (!g.collectedMushrooms.includes(i)) drawMushroom(ctx, mush.x - 16, mush.y - 17, g.frame); });
       lv.stars.forEach((star, i) => { if (!g.collectedStars.includes(i)) drawStar(ctx, star.x, star.y, 15, g.frame); });
       if (lv.movingStars) lv.movingStars.forEach((ms, i) => {
         if (g.collectedMoving.includes(i)) return;
@@ -741,7 +824,7 @@ export default function MarioGame() {
       });
 
       if (g.gameState === "playing" || g.gameState === "levelComplete")
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0);
 
       // HUD
       if (g.gameState === "playing") {
