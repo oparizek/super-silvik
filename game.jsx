@@ -158,6 +158,20 @@ class RetroMusic {
         g.gain.setValueAtTime(0.09, now + i * 0.07); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.15);
         o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.07); o.stop(now + i * 0.07 + 0.16);
       });
+    } else if (type === "break") {
+      for (let i = 0; i < 4; i++) {
+        const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+        o.type = "sawtooth"; o.frequency.setValueAtTime(280 - i * 45, now + i * 0.04);
+        g.gain.setValueAtTime(0.09, now + i * 0.04); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.07);
+        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.04); o.stop(now + i * 0.04 + 0.09);
+      }
+    } else if (type === "shrink") {
+      [784, 698, 587, 523, 440].forEach((f, i) => {
+        const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+        o.type = "square"; o.frequency.setValueAtTime(f, now + i * 0.06);
+        g.gain.setValueAtTime(0.07, now + i * 0.06); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.1);
+        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.06); o.stop(now + i * 0.06 + 0.11);
+      });
     }
   }
 
@@ -304,11 +318,11 @@ const LEVELS = [
     platforms: [
       { x: 0, y: 440, w: 800, h: 60, color: "#4a8c3f" },
       { x: 150, y: 350, w: 120, h: 20, color: "#8B4513" },
-      { x: 350, y: 290, w: 120, h: 20, color: "#8B4513" },
+      { x: 350, y: 290, w: 120, h: 20, color: "#8B4513", breakable: true, drop: "star" },
       { x: 550, y: 220, w: 120, h: 20, color: "#8B4513" },
       { x: 200, y: 170, w: 120, h: 20, color: "#8B4513" },
-      { x: 450, y: 130, w: 100, h: 20, color: "#8B4513" },
-      { x: 650, y: 350, w: 100, h: 20, color: "#8B4513" },
+      { x: 450, y: 130, w: 100, h: 20, color: "#8B4513", breakable: true, drop: "growMushroom" },
+      { x: 650, y: 350, w: 100, h: 20, color: "#8B4513", breakable: true, drop: "shrinkMushroom" },
     ],
     stars: [{ x: 190, y: 310 }, { x: 390, y: 250 }, { x: 590, y: 180 }, { x: 240, y: 130 }, { x: 480, y: 90 }, { x: 690, y: 310 }, { x: 100, y: 400 }, { x: 500, y: 400 }],
     eyeExercise: "tracking",
@@ -325,11 +339,11 @@ const LEVELS = [
     platforms: [
       { x: 0, y: 440, w: 800, h: 60, color: "#2d5016" },
       { x: 30, y: 350, w: 140, h: 20, color: "#5c3d2e" },
-      { x: 200, y: 300, w: 140, h: 20, color: "#5c3d2e" },
-      { x: 370, y: 350, w: 140, h: 20, color: "#5c3d2e" },
+      { x: 200, y: 300, w: 140, h: 20, color: "#5c3d2e", breakable: true, drop: "shrinkMushroom" },
+      { x: 370, y: 350, w: 140, h: 20, color: "#5c3d2e", breakable: true, drop: "star" },
       { x: 280, y: 200, w: 160, h: 20, color: "#5c3d2e" },
       { x: 520, y: 260, w: 140, h: 20, color: "#5c3d2e" },
-      { x: 630, y: 180, w: 140, h: 20, color: "#5c3d2e" },
+      { x: 630, y: 180, w: 140, h: 20, color: "#5c3d2e", breakable: true, drop: "growMushroom" },
       { x: 70, y: 150, w: 140, h: 20, color: "#5c3d2e" },
     ],
     stars: [{ x: 80, y: 310 }, { x: 250, y: 260 }, { x: 430, y: 310 }, { x: 340, y: 160 }, { x: 580, y: 220 }, { x: 720, y: 140 }, { x: 130, y: 110 }, { x: 300, y: 400 }, { x: 650, y: 400 }],
@@ -347,12 +361,12 @@ const LEVELS = [
     platforms: [
       { x: 0, y: 440, w: 800, h: 60, color: "#C0A080" },
       { x: 80, y: 360, w: 130, h: 20, color: "#FF6B6B" },
-      { x: 230, y: 300, w: 130, h: 20, color: "#FFA500" },
-      { x: 380, y: 240, w: 130, h: 20, color: "#FFD700" },
+      { x: 230, y: 300, w: 130, h: 20, color: "#FFA500", breakable: true, drop: "growMushroom" },
+      { x: 380, y: 240, w: 130, h: 20, color: "#FFD700", breakable: true, drop: "star" },
       { x: 520, y: 300, w: 130, h: 20, color: "#90EE90" },
       { x: 630, y: 240, w: 130, h: 20, color: "#87CEEB" },
       { x: 270, y: 160, w: 130, h: 20, color: "#DDA0DD" },
-      { x: 460, y: 120, w: 130, h: 20, color: "#FF69B4" },
+      { x: 460, y: 120, w: 130, h: 20, color: "#FF69B4", breakable: true, drop: "shrinkMushroom" },
       { x: 120, y: 200, w: 130, h: 20, color: "#FF6B6B" },
       { x: 610, y: 150, w: 140, h: 20, color: "#FFD700" },
     ],
@@ -371,11 +385,11 @@ const LEVELS = [
     platforms: [
       { x: 0, y: 440, w: 800, h: 60, color: "#2d4a1e" },
       { x: 80, y: 360, w: 110, h: 20, color: "#5c3d2e" },
-      { x: 250, y: 310, w: 100, h: 20, color: "#5c3d2e" },
+      { x: 250, y: 310, w: 100, h: 20, color: "#5c3d2e", breakable: true, drop: "star" },
       { x: 420, y: 260, w: 110, h: 20, color: "#5c3d2e" },
-      { x: 600, y: 320, w: 100, h: 20, color: "#5c3d2e" },
+      { x: 600, y: 320, w: 100, h: 20, color: "#5c3d2e", breakable: true, drop: "growMushroom" },
       { x: 160, y: 210, w: 100, h: 20, color: "#5c3d2e" },
-      { x: 350, y: 160, w: 110, h: 20, color: "#5c3d2e" },
+      { x: 350, y: 160, w: 110, h: 20, color: "#5c3d2e", breakable: true, drop: "shrinkMushroom" },
       { x: 560, y: 190, w: 100, h: 20, color: "#5c3d2e" },
       { x: 700, y: 140, w: 90, h: 20, color: "#5c3d2e" },
     ],
@@ -438,11 +452,36 @@ function drawMushroom(ctx, x, y, frame) {
   ctx.restore();
 }
 
-function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false) {
+function drawShrinkMushroom(ctx, x, y, frame) {
+  const bob = Math.sin(frame * 0.06 + x * 0.01) * 2;
+  ctx.save();
+  ctx.shadowColor = "rgba(30,100,255,0.6)"; ctx.shadowBlur = 14;
+  // stem
+  ctx.fillStyle = "#F5DEB3";
+  ctx.beginPath(); ctx.roundRect(x + 7, y + 18 + bob, 10, 10, [2, 2, 3, 3]); ctx.fill();
+  // cap - blue, smaller
+  ctx.fillStyle = "#1565C0";
+  ctx.beginPath(); ctx.ellipse(x + 12, y + 18 + bob, 13, 9, 0, Math.PI, 0); ctx.fill();
+  ctx.strokeStyle = "#0D47A1"; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.ellipse(x + 12, y + 18 + bob, 13, 9, 0, Math.PI, 0); ctx.stroke();
+  // white dots
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#FFF";
+  ctx.beginPath(); ctx.arc(x + 6, y + 11 + bob, 2.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 12, y + 7 + bob, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 18, y + 11 + bob, 2.5, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false) {
   ctx.save();
   if (mushroomPower) {
     const pcx = x + PW / 2, pcy = y + PH / 2;
     ctx.translate(pcx, pcy); ctx.scale(1.5, 1.5); ctx.translate(-pcx, -pcy);
+    if (Math.floor(frame / 6) % 2 === 0) ctx.globalAlpha = 0.65;
+  } else if (shrinkPower) {
+    const pcx = x + PW / 2, pcy = y + PH / 2;
+    ctx.translate(pcx, pcy); ctx.scale(0.65, 0.65); ctx.translate(-pcx, -pcy);
     if (Math.floor(frame / 6) % 2 === 0) ctx.globalAlpha = 0.65;
   }
   const f = facingRight ? 1 : -1;
@@ -604,7 +643,8 @@ export default function MarioGame() {
     player: { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true },
     keys: {}, frame: 0, score: 0, lives: 3, level: 0,
     collectedStars: [], collectedMoving: [], collectedMushrooms: [], particles: [], enemies: [], dogs: [],
-    petted: [], invincibleTimer: 0, mushroomTimer: 0, gameState: "menu",
+    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, gameState: "menu",
+    brokenBlocks: [], fallingItems: [],
     touchLeft: false, touchRight: false, touchJump: false, musicOn: true,
   });
   const [ui, setUi] = useState({ score: 0, lives: 3, level: 0, gameState: "menu", levelName: "", musicOn: true });
@@ -614,7 +654,8 @@ export default function MarioGame() {
     const g = gs.current;
     g.player = { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true };
     g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.particles = [];
-    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.gameState = "playing";
+    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0;
+    g.brokenBlocks = []; g.fallingItems = []; g.gameState = "playing";
     music.setMode("normal");
     const lvDogs = LEVELS[li].dogs || [];
     g.dogs = lvDogs.map(d => ({ ...d, dir: 1, frame: Math.random() * 100, happy: false, happyTimer: 0 }));
@@ -680,6 +721,59 @@ export default function MarioGame() {
             p.y = pl.y - PH; p.vy = 0; p.onGround = true;
           }
         }
+
+        // Breakable blocks – hit from below
+        lv.platforms.forEach((pl, i) => {
+          if (!pl.breakable || g.brokenBlocks.includes(i)) return;
+          if (p.x + PW > pl.x && p.x < pl.x + pl.w &&
+              p.y >= pl.y - 4 && p.y <= pl.y + pl.h + 4 &&
+              p.vy < 0) {
+            p.vy = 2;
+            g.brokenBlocks.push(i);
+            music.playSFX("break");
+            for (let j = 0; j < 14; j++) g.particles.push({ x: pl.x + pl.w / 2, y: pl.y, vx: (Math.random() - 0.5) * 9, vy: (Math.random() - 2) * 5, life: 40, color: ["#8B4513", "#A0522D", "#DEB887", "#D2691E", "#C4A06D"][j % 5] });
+            if (pl.drop) g.fallingItems.push({ x: pl.x + pl.w / 2 - 12, y: pl.y - 26, vy: -5, type: pl.drop });
+          }
+        });
+
+        // Shrink timer
+        if (g.shrinkTimer > 0) g.shrinkTimer--;
+
+        // Falling items physics + collection
+        g.fallingItems = g.fallingItems.filter(item => {
+          item.vy += GRAVITY * 0.7;
+          item.y += item.vy;
+          // Land on platforms
+          for (const pl of lv.platforms) {
+            if (item.x + 24 > pl.x && item.x < pl.x + pl.w &&
+                item.y + 24 >= pl.y && item.y + 24 < pl.y + pl.h + 8 &&
+                item.vy > 0) {
+              item.y = pl.y - 24; item.vy = 0;
+            }
+          }
+          // Player collects item
+          const dx = p.x + PW / 2 - (item.x + 12), dy = p.y + PH / 2 - (item.y + 12);
+          if (Math.sqrt(dx * dx + dy * dy) < 38) {
+            if (item.type === "star") {
+              g.score += 20; music.playSFX("star");
+              for (let j = 0; j < 16; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.5) * 7, life: 40, color: ["#FFD700", "#FFEB3B", "#FFF176", "#FF8F00"][j % 4] });
+              setUi(prev => ({ ...prev, score: g.score }));
+            } else if (item.type === "growMushroom") {
+              g.mushroomTimer = 500; g.shrinkTimer = 0;
+              music.playSFX("mushroom");
+              if (g.musicOn) music.setMode("power");
+              for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#D32F2F", "#FF5252", "#FFFFFF", "#FF8A65", "#FFD700"][j % 5] });
+            } else if (item.type === "shrinkMushroom") {
+              g.shrinkTimer = 400; g.mushroomTimer = 0;
+              music.playSFX("shrink");
+              music.setMode("normal");
+              for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#1565C0", "#42A5F5", "#FFFFFF", "#0D47A1", "#29B6F6"][j % 5] });
+            }
+            return false;
+          }
+          return item.y < GH + 100;
+        });
+
         if (p.x < 0) p.x = 0; if (p.x + PW > GW) p.x = GW - PW;
         if (p.y > GH + 50) { p.x = 50; p.y = 380; p.vx = 0; p.vy = 0; }
 
@@ -790,13 +884,45 @@ export default function MarioGame() {
         for (let gx = 0; gx < GW; gx += 20) { const gh = 5 + Math.sin(gx * 0.3) * 3; ctx.beginPath(); ctx.moveTo(gx, lv.platforms[0].y); ctx.lineTo(gx + 5, lv.platforms[0].y - gh); ctx.lineTo(gx + 10, lv.platforms[0].y); ctx.fill(); }
       }
       lv.platforms.forEach((pl, i) => {
-        ctx.fillStyle = pl.color;
-        if (i === 0) { ctx.fillRect(pl.x, pl.y, pl.w, pl.h); return; }
-        ctx.beginPath(); ctx.roundRect(pl.x, pl.y, pl.w, pl.h, 4); ctx.fill();
-        ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.lineWidth = 1; ctx.stroke();
-        ctx.fillStyle = "rgba(255,255,255,0.2)"; ctx.fillRect(pl.x + 2, pl.y + 1, pl.w - 4, 3);
-        ctx.fillStyle = "#4CAF50";
-        for (let gx = pl.x; gx < pl.x + pl.w; gx += 8) { ctx.beginPath(); ctx.moveTo(gx, pl.y); ctx.lineTo(gx + 3, pl.y - 4); ctx.lineTo(gx + 6, pl.y); ctx.fill(); }
+        if (pl.breakable && g.brokenBlocks.includes(i)) return;
+        if (i === 0) { ctx.fillStyle = pl.color; ctx.fillRect(pl.x, pl.y, pl.w, pl.h); return; }
+        if (pl.breakable) {
+          // Brick block style
+          ctx.fillStyle = "#A0522D";
+          ctx.beginPath(); ctx.roundRect(pl.x, pl.y, pl.w, pl.h, 3); ctx.fill();
+          ctx.strokeStyle = "#5D2906"; ctx.lineWidth = 1.5;
+          ctx.strokeRect(pl.x, pl.y, pl.w, pl.h);
+          // Brick mortar lines
+          ctx.beginPath(); ctx.moveTo(pl.x, pl.y + pl.h / 2); ctx.lineTo(pl.x + pl.w, pl.y + pl.h / 2); ctx.stroke();
+          const bw = 22;
+          for (let bx = pl.x + bw; bx < pl.x + pl.w; bx += bw) { ctx.beginPath(); ctx.moveTo(bx, pl.y); ctx.lineTo(bx, pl.y + pl.h / 2); ctx.stroke(); }
+          for (let bx = pl.x + bw / 2; bx < pl.x + pl.w; bx += bw) { ctx.beginPath(); ctx.moveTo(bx, pl.y + pl.h / 2); ctx.lineTo(bx, pl.y + pl.h); ctx.stroke(); }
+          ctx.fillStyle = "rgba(255,255,255,0.18)"; ctx.fillRect(pl.x + 2, pl.y + 1, pl.w - 4, 3);
+          // "?" indicator if has drop
+          if (pl.drop) {
+            const pulse = 0.85 + Math.sin(g.frame * 0.08) * 0.15;
+            ctx.save();
+            ctx.translate(pl.x + pl.w / 2, pl.y + pl.h / 2 + 3);
+            ctx.scale(pulse, pulse);
+            ctx.fillStyle = "#FFD700"; ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center";
+            ctx.fillText("?", 0, 0);
+            ctx.restore();
+          }
+        } else {
+          ctx.fillStyle = pl.color;
+          ctx.beginPath(); ctx.roundRect(pl.x, pl.y, pl.w, pl.h, 4); ctx.fill();
+          ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.lineWidth = 1; ctx.stroke();
+          ctx.fillStyle = "rgba(255,255,255,0.2)"; ctx.fillRect(pl.x + 2, pl.y + 1, pl.w - 4, 3);
+          ctx.fillStyle = "#4CAF50";
+          for (let gx = pl.x; gx < pl.x + pl.w; gx += 8) { ctx.beginPath(); ctx.moveTo(gx, pl.y); ctx.lineTo(gx + 3, pl.y - 4); ctx.lineTo(gx + 6, pl.y); ctx.fill(); }
+        }
+      });
+
+      // Falling items from broken blocks
+      g.fallingItems.forEach(item => {
+        if (item.type === "star") drawStar(ctx, item.x + 12, item.y + 12, 14, g.frame, true);
+        else if (item.type === "growMushroom") drawMushroom(ctx, item.x, item.y, g.frame);
+        else if (item.type === "shrinkMushroom") drawShrinkMushroom(ctx, item.x, item.y, g.frame);
       });
 
       lv.mushrooms?.forEach((mush, i) => { if (!g.collectedMushrooms.includes(i)) drawMushroom(ctx, mush.x - 16, mush.y - 17, g.frame); });
@@ -824,7 +950,7 @@ export default function MarioGame() {
       });
 
       if (g.gameState === "playing" || g.gameState === "levelComplete")
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0);
 
       // HUD
       if (g.gameState === "playing") {
