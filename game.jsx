@@ -2,9 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 const GW = 800;
 const GH = 500;
-const GRAVITY = 0.5;
-const JUMP_FORCE = -11;
-const MOVE_SPEED = 4;
+const GRAVITY = 0.38;
+const JUMP_FORCE = -13;
+const MOVE_SPEED = 3.5;
 const PW = 36;
 const PH = 44;
 const ENEMY_W = 34;
@@ -287,16 +287,16 @@ const LEVELS = [
   },
   {
     name: "Kouzelný les 🌲",
-    bg: "linear-gradient(180deg, #2d1b69 0%, #4a2d8c 40%, #1a472a 60%, #0d2818 100%)",
+    bg: "linear-gradient(180deg, #7B1FA2 0%, #CE93D8 35%, #81C784 60%, #388E3C 100%)",
     platforms: [
       { x: 0, y: 440, w: 800, h: 60, color: "#2d5016" },
-      { x: 50, y: 350, w: 100, h: 20, color: "#5c3d2e" },
-      { x: 220, y: 300, w: 100, h: 20, color: "#5c3d2e" },
-      { x: 400, y: 350, w: 100, h: 20, color: "#5c3d2e" },
-      { x: 300, y: 200, w: 130, h: 20, color: "#5c3d2e" },
-      { x: 550, y: 260, w: 100, h: 20, color: "#5c3d2e" },
-      { x: 680, y: 180, w: 100, h: 20, color: "#5c3d2e" },
-      { x: 100, y: 150, w: 100, h: 20, color: "#5c3d2e" },
+      { x: 30, y: 350, w: 140, h: 20, color: "#5c3d2e" },
+      { x: 200, y: 300, w: 140, h: 20, color: "#5c3d2e" },
+      { x: 370, y: 350, w: 140, h: 20, color: "#5c3d2e" },
+      { x: 280, y: 200, w: 160, h: 20, color: "#5c3d2e" },
+      { x: 520, y: 260, w: 140, h: 20, color: "#5c3d2e" },
+      { x: 630, y: 180, w: 140, h: 20, color: "#5c3d2e" },
+      { x: 70, y: 150, w: 140, h: 20, color: "#5c3d2e" },
     ],
     stars: [{ x: 80, y: 310 }, { x: 250, y: 260 }, { x: 430, y: 310 }, { x: 340, y: 160 }, { x: 580, y: 220 }, { x: 720, y: 140 }, { x: 130, y: 110 }, { x: 300, y: 400 }, { x: 650, y: 400 }],
     eyeExercise: "saccade",
@@ -311,15 +311,15 @@ const LEVELS = [
     bg: "linear-gradient(180deg, #FFB6C1 0%, #DDA0DD 30%, #ADD8E6 60%, #98FB98 80%, #F5DEB3 100%)",
     platforms: [
       { x: 0, y: 440, w: 800, h: 60, color: "#C0A080" },
-      { x: 100, y: 360, w: 80, h: 20, color: "#FF6B6B" },
-      { x: 250, y: 300, w: 80, h: 20, color: "#FFA500" },
-      { x: 400, y: 240, w: 80, h: 20, color: "#FFD700" },
-      { x: 550, y: 300, w: 80, h: 20, color: "#90EE90" },
-      { x: 680, y: 240, w: 80, h: 20, color: "#87CEEB" },
-      { x: 300, y: 160, w: 80, h: 20, color: "#DDA0DD" },
-      { x: 500, y: 120, w: 80, h: 20, color: "#FF69B4" },
-      { x: 150, y: 200, w: 80, h: 20, color: "#FF6B6B" },
-      { x: 650, y: 150, w: 100, h: 20, color: "#FFD700" },
+      { x: 80, y: 360, w: 130, h: 20, color: "#FF6B6B" },
+      { x: 230, y: 300, w: 130, h: 20, color: "#FFA500" },
+      { x: 380, y: 240, w: 130, h: 20, color: "#FFD700" },
+      { x: 520, y: 300, w: 130, h: 20, color: "#90EE90" },
+      { x: 630, y: 240, w: 130, h: 20, color: "#87CEEB" },
+      { x: 270, y: 160, w: 130, h: 20, color: "#DDA0DD" },
+      { x: 460, y: 120, w: 130, h: 20, color: "#FF69B4" },
+      { x: 120, y: 200, w: 130, h: 20, color: "#FF6B6B" },
+      { x: 610, y: 150, w: 140, h: 20, color: "#FFD700" },
     ],
     stars: [{ x: 120, y: 320 }, { x: 270, y: 260 }, { x: 420, y: 200 }, { x: 570, y: 260 }, { x: 700, y: 200 }, { x: 320, y: 120 }, { x: 520, y: 80 }, { x: 170, y: 160 }, { x: 680, y: 110 }, { x: 400, y: 400 }],
     eyeExercise: "convergence",
@@ -331,7 +331,7 @@ const LEVELS = [
   },
   {
     name: "Psí les 🐕🌲",
-    bg: "linear-gradient(180deg, #4a6741 0%, #2d5016 30%, #1a3a0e 60%, #0f2b08 100%)",
+    bg: "linear-gradient(180deg, #558B2F 0%, #7CB342 35%, #33691E 65%, #1B5E20 100%)",
     platforms: [
       { x: 0, y: 440, w: 800, h: 60, color: "#2d4a1e" },
       { x: 80, y: 360, w: 110, h: 20, color: "#5c3d2e" },
@@ -637,10 +637,8 @@ export default function MarioGame() {
               for (let j = 0; j < 10; j++) g.particles.push({ x: en.x + ENEMY_W / 2, y: en.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 1) * 5, life: 35, color: ["#FFD700", "#FF5722", "#FF9800", "#FFEB3B"][j % 4] });
               setUi(prev => ({ ...prev, score: g.score }));
             } else if (g.invincibleTimer <= 0) {
-              g.lives--; g.invincibleTimer = 90; music.playSFX("hurt");
-              p.vy = -6; p.vx = p.x < en.x ? -4 : 4;
-              setUi(prev => ({ ...prev, lives: g.lives }));
-              if (g.lives <= 0) { g.gameState = "gameOver"; music.stop(); setUi(prev => ({ ...prev, gameState: "gameOver" })); }
+              g.invincibleTimer = 40;
+              p.vy = -5; p.vx = p.x < en.x ? -3 : 3;
             }
           }
         });
@@ -649,9 +647,9 @@ export default function MarioGame() {
         lv.stars.forEach((star, i) => {
           if (g.collectedStars.includes(i)) return;
           const dx = p.x + PW / 2 - star.x, dy = p.y + PH / 2 - star.y;
-          if (Math.sqrt(dx * dx + dy * dy) < 28) {
+          if (Math.sqrt(dx * dx + dy * dy) < 42) {
             g.collectedStars.push(i); g.score += 10; music.playSFX("star");
-            for (let j = 0; j < 8; j++) g.particles.push({ x: star.x, y: star.y, vx: (Math.random() - 0.5) * 5, vy: (Math.random() - 0.5) * 5, life: 30, color: ["#FFD700", "#FFEB3B", "#FFF176", "#FF8F00"][j % 4] });
+            for (let j = 0; j < 16; j++) g.particles.push({ x: star.x, y: star.y, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.5) * 7, life: 40, color: ["#FFD700", "#FFEB3B", "#FFF176", "#FF8F00", "#FF4081", "#FF80AB"][j % 6] });
             setUi(prev => ({ ...prev, score: g.score }));
           }
         });
@@ -661,9 +659,9 @@ export default function MarioGame() {
           if (ms.x <= ms.minX || ms.x >= ms.maxX) ms.dx *= -1;
           if (ms.y <= ms.minY || ms.y >= ms.maxY) ms.dy *= -1;
           const dx = p.x + PW / 2 - ms.x, dy = p.y + PH / 2 - ms.y;
-          if (Math.sqrt(dx * dx + dy * dy) < 28) {
+          if (Math.sqrt(dx * dx + dy * dy) < 42) {
             g.collectedMoving.push(i); g.score += 25; music.playSFX("star");
-            for (let j = 0; j < 12; j++) g.particles.push({ x: ms.x, y: ms.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 0.5) * 6, life: 40, color: ["#FF4081", "#E040FB", "#7C4DFF", "#448AFF"][j % 4] });
+            for (let j = 0; j < 20; j++) g.particles.push({ x: ms.x, y: ms.y, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8, life: 50, color: ["#FF4081", "#E040FB", "#7C4DFF", "#448AFF", "#FFD700", "#69F0AE"][j % 6] });
             setUi(prev => ({ ...prev, score: g.score }));
           }
         });
@@ -719,12 +717,12 @@ export default function MarioGame() {
         for (let gx = pl.x; gx < pl.x + pl.w; gx += 8) { ctx.beginPath(); ctx.moveTo(gx, pl.y); ctx.lineTo(gx + 3, pl.y - 4); ctx.lineTo(gx + 6, pl.y); ctx.fill(); }
       });
 
-      lv.stars.forEach((star, i) => { if (!g.collectedStars.includes(i)) drawStar(ctx, star.x, star.y, 10, g.frame); });
+      lv.stars.forEach((star, i) => { if (!g.collectedStars.includes(i)) drawStar(ctx, star.x, star.y, 15, g.frame); });
       if (lv.movingStars) lv.movingStars.forEach((ms, i) => {
         if (g.collectedMoving.includes(i)) return;
         ctx.save(); ctx.globalAlpha = 0.3; drawStar(ctx, ms.x - ms.dx * 3, ms.y - ms.dy * 3, 7, g.frame, true); ctx.restore();
         ctx.save(); ctx.globalAlpha = 0.15; drawStar(ctx, ms.x - ms.dx * 6, ms.y - ms.dy * 6, 5, g.frame, true); ctx.restore();
-        drawStar(ctx, ms.x, ms.y, 12, g.frame, true);
+        drawStar(ctx, ms.x, ms.y, 17, g.frame, true);
       });
 
       g.enemies.forEach(en => drawEnemy(ctx, en));
@@ -735,65 +733,84 @@ export default function MarioGame() {
           ctx.fillText("\u2764\uFE0F", dog.x + ENEMY_W / 2, dog.y - 10 - Math.sin(dog.frame * 0.1) * 4);
         }
       });
-      g.particles.forEach(pt => { ctx.save(); ctx.globalAlpha = pt.life / 40; ctx.fillStyle = pt.color; ctx.beginPath(); ctx.arc(pt.x, pt.y, 3 * (pt.life / 40), 0, Math.PI * 2); ctx.fill(); ctx.restore(); });
+      g.particles.forEach(pt => {
+        const maxLife = pt.maxLife || 40;
+        ctx.save(); ctx.globalAlpha = pt.life / maxLife;
+        ctx.shadowColor = pt.color; ctx.shadowBlur = 8;
+        ctx.fillStyle = pt.color; ctx.beginPath(); ctx.arc(pt.x, pt.y, 5 * (pt.life / maxLife), 0, Math.PI * 2); ctx.fill(); ctx.restore();
+      });
 
       if (g.gameState === "playing" || g.gameState === "levelComplete")
         drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0);
 
       // HUD
       if (g.gameState === "playing") {
-        ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.beginPath(); ctx.roundRect(10, 10, 230, 30, 8); ctx.fill();
-        ctx.fillStyle = "#FFF"; ctx.font = "bold 11px 'Segoe UI', sans-serif"; ctx.textAlign = "left";
-        const hints = { tracking: "👀 Sleduj zlaté hvězdy očima!", saccade: "👀 Hledej rychlé hvězdy!", convergence: "👀 Sleduj hvězdy blízko i daleko!" };
-        ctx.fillText(hints[lv.eyeExercise] || "", 20, 30);
+        const total = lv.stars.length + (lv.movingStars ? lv.movingStars.length : 0);
+        const collected = g.collectedStars.length + g.collectedMoving.length;
+        // Big star counter top-left
+        ctx.fillStyle = "rgba(0,0,0,0.45)"; ctx.beginPath(); ctx.roundRect(10, 8, 180, 44, 12); ctx.fill();
+        ctx.font = "bold 26px 'Segoe UI', sans-serif"; ctx.textAlign = "left";
+        ctx.fillStyle = "#FFD700";
+        ctx.fillText("\u2B50 " + collected + " / " + total, 22, 40);
       }
 
-      ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.beginPath(); ctx.roundRect(GW - 220, 8, 210, 30, 8); ctx.fill();
-      ctx.fillStyle = "#FFD700"; ctx.font = "bold 15px 'Segoe UI', sans-serif"; ctx.textAlign = "right";
-      ctx.fillText("\u2B50 " + g.score, GW - 20, 28);
-      ctx.fillStyle = "#FF5252"; ctx.textAlign = "left";
-      let heartStr = ""; for (let i = 0; i < g.lives; i++) heartStr += "\u2764\uFE0F"; ctx.fillText(heartStr, GW - 210, 28);
-      if (g.gameState === "playing") {
-        const total = lv.stars.length + (lv.movingStars ? lv.movingStars.length : 0);
-        ctx.fillStyle = "#FFF"; ctx.font = "12px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
-        ctx.fillText((g.collectedStars.length + g.collectedMoving.length) + "/" + total, GW - 108, 27);
-      }
-      ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.beginPath(); ctx.roundRect(GW - 42, 44, 32, 22, 6); ctx.fill();
-      ctx.fillStyle = "#FFF"; ctx.font = "13px sans-serif"; ctx.textAlign = "center";
-      ctx.fillText(g.musicOn ? "\uD83D\uDD0A" : "\uD83D\uDD07", GW - 26, 60);
+      // Score top-right
+      ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.beginPath(); ctx.roundRect(GW - 170, 8, 160, 44, 12); ctx.fill();
+      ctx.fillStyle = "#FFD700"; ctx.font = "bold 20px 'Segoe UI', sans-serif"; ctx.textAlign = "right";
+      ctx.fillText("\uD83C\uDF1F " + g.score, GW - 16, 38);
+
+      // Music toggle
+      ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.beginPath(); ctx.roundRect(GW - 42, 58, 32, 24, 6); ctx.fill();
+      ctx.fillStyle = "#FFF"; ctx.font = "15px sans-serif"; ctx.textAlign = "center";
+      ctx.fillText(g.musicOn ? "\uD83D\uDD0A" : "\uD83D\uDD07", GW - 26, 76);
 
       // Overlays
       if (g.gameState === "menu") {
-        ctx.fillStyle = "rgba(0,0,50,0.75)"; ctx.fillRect(0, 0, GW, GH);
-        ctx.fillStyle = "#FFD700"; ctx.font = "bold 42px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
-        ctx.shadowColor = "#FF8F00"; ctx.shadowBlur = 20;
-        ctx.fillText("\uD83C\uDF1F Hvězdný Kluk \uD83C\uDF1F", GW / 2, 120); ctx.shadowBlur = 0;
-        drawPlayer(ctx, GW / 2 - 18, 145, true, g.frame, false);
-        drawTurtle(ctx, GW / 2 - 120, 200, 1, g.frame);
-        drawBoar(ctx, GW / 2 - 40, 198, -1, g.frame);
-        drawHippo(ctx, GW / 2 + 35, 194, 1, g.frame);
-        drawDog(ctx, GW / 2 + 100, 196, -1, g.frame, true);
-        ctx.fillStyle = "#FFF"; ctx.font = "18px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
-        ctx.fillText("Sbírej \u2B50, skoč na nepřátele a potkej pejsky! \uD83D\uDC36", GW / 2, 265);
-        ctx.fillStyle = "#B3E5FC"; ctx.font = "14px 'Segoe UI', sans-serif";
-        ctx.fillText("\uD83C\uDFAE Šipky = pohyb   Mezerník = skok   M = hudba", GW / 2, 300);
-        ctx.fillText("\uD83D\uDCF1 Dotyková tlačítka dole", GW / 2, 322);
-        const sp = 1 + Math.sin(g.frame * 0.05) * 0.05;
-        ctx.save(); ctx.translate(GW / 2, 380); ctx.scale(sp, sp);
-        ctx.fillStyle = "#4CAF50"; ctx.beginPath(); ctx.roundRect(-100, -22, 200, 44, 22); ctx.fill();
-        ctx.fillStyle = "#FFF"; ctx.font = "bold 20px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
-        ctx.fillText("\u25B6  HRÁT!", 0, 7); ctx.restore();
+        ctx.fillStyle = "rgba(0,20,80,0.72)"; ctx.fillRect(0, 0, GW, GH);
+        // Title
+        ctx.fillStyle = "#FFD700"; ctx.font = "bold 48px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+        ctx.shadowColor = "#FF8F00"; ctx.shadowBlur = 24;
+        ctx.fillText("\uD83C\uDF1F Super Silv\u00EDk \uD83C\uDF1F", GW / 2, 110); ctx.shadowBlur = 0;
+        // Characters
+        drawPlayer(ctx, GW / 2 - 18, 135, true, g.frame, false);
+        drawTurtle(ctx, GW / 2 - 130, 192, 1, g.frame);
+        drawBoar(ctx, GW / 2 - 50, 190, -1, g.frame);
+        drawHippo(ctx, GW / 2 + 28, 188, 1, g.frame);
+        drawDog(ctx, GW / 2 + 110, 190, -1, g.frame, true);
+        // Simple instruction for kids
+        ctx.fillStyle = "#FFEB3B"; ctx.font = "bold 22px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("Sbírej v\u0161echny hv\u011Bzdi\u010Dky! \u2B50\u2B50\u2B50", GW / 2, 258);
+        ctx.fillStyle = "#E1F5FE"; ctx.font = "18px 'Segoe UI', sans-serif";
+        ctx.fillText("\uD83D\uDC46 Pohybuj se a ska\u010Dej!", GW / 2, 292);
+        // Big bouncy play button
+        const sp = 1 + Math.sin(g.frame * 0.06) * 0.07;
+        ctx.save(); ctx.translate(GW / 2, 385); ctx.scale(sp, sp);
+        ctx.shadowColor = "#00E676"; ctx.shadowBlur = 20;
+        ctx.fillStyle = "#43A047"; ctx.beginPath(); ctx.roundRect(-120, -28, 240, 56, 28); ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#FFF"; ctx.font = "bold 26px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("\u25B6  HR\u00C1T!", 0, 9); ctx.restore();
       }
       if (g.gameState === "levelComplete") {
         ctx.fillStyle = "rgba(0,0,50,0.6)"; ctx.fillRect(0, 0, GW, GH);
-        ctx.fillStyle = "#FFD700"; ctx.font = "bold 36px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
-        ctx.fillText("\uD83C\uDF89 Výborně! \uD83C\uDF89", GW / 2, 180);
+        // Animated stars celebration
+        for (let i = 0; i < 12; i++) {
+          const sx = GW / 2 + Math.cos(g.frame * 0.04 + i * (Math.PI * 2 / 12)) * 180;
+          const sy = 230 + Math.sin(g.frame * 0.04 + i * (Math.PI * 2 / 12)) * 80;
+          drawStar(ctx, sx, sy, 8 + (i % 3) * 2, g.frame);
+        }
+        ctx.fillStyle = "#FFD700"; ctx.font = "bold 44px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+        ctx.shadowColor = "#FF8F00"; ctx.shadowBlur = 20;
+        ctx.fillText("\uD83C\uDF89 Výborně! \uD83C\uDF89", GW / 2, 175); ctx.shadowBlur = 0;
+        ctx.fillStyle = "#FFEB3B"; ctx.font = "bold 26px 'Segoe UI', sans-serif";
+        ctx.fillText(lv.name + " hotovo! \uD83C\uDFC6", GW / 2, 220);
         ctx.fillStyle = "#FFF"; ctx.font = "22px 'Segoe UI', sans-serif";
-        ctx.fillText(lv.name + " hotovo!", GW / 2, 225);
-        ctx.fillText("Skóre: " + g.score + " \u2B50", GW / 2, 265);
-        ctx.fillStyle = "#4CAF50"; ctx.beginPath(); ctx.roundRect(GW / 2 - 100, 300, 200, 44, 22); ctx.fill();
-        ctx.fillStyle = "#FFF"; ctx.font = "bold 18px 'Segoe UI', sans-serif";
-        ctx.fillText(g.level + 1 < LEVELS.length ? "Další level \u25B6" : "Výsledky \u25B6", GW / 2, 328);
+        ctx.fillText("\u2B50 Hvězdy: " + g.score, GW / 2, 260);
+        const sp2 = 1 + Math.sin(g.frame * 0.06) * 0.06;
+        ctx.save(); ctx.translate(GW / 2, 320); ctx.scale(sp2, sp2);
+        ctx.fillStyle = "#4CAF50"; ctx.beginPath(); ctx.roundRect(-120, -26, 240, 52, 26); ctx.fill();
+        ctx.fillStyle = "#FFF"; ctx.font = "bold 22px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+        ctx.fillText(g.level + 1 < LEVELS.length ? "D\u00E1l! \u25B6" : "V\u00FDsledky \u25B6", 0, 8); ctx.restore();
       }
       if (g.gameState === "gameOver") {
         ctx.fillStyle = "rgba(50,0,0,0.8)"; ctx.fillRect(0, 0, GW, GH);
@@ -835,9 +852,9 @@ export default function MarioGame() {
     const rect = canvasRef.current.getBoundingClientRect();
     const x = (e.clientX - rect.left) * (GW / rect.width), y = (e.clientY - rect.top) * (GH / rect.height);
     if (x > GW - 42 && x < GW - 10 && y > 44 && y < 66) { g.musicOn = music.toggle(); setUi(p => ({ ...p, musicOn: g.musicOn })); return; }
-    if (g.gameState === "menu") { if (y > 358 && y < 402 && x > GW / 2 - 100 && x < GW / 2 + 100) startGame(); }
-    else if (g.gameState === "levelComplete") { if (x > GW / 2 - 100 && x < GW / 2 + 100 && y > 300 && y < 344) { music.playSFX("levelup"); if (g.level + 1 < LEVELS.length) resetLevel(g.level + 1); else { g.gameState = "gameComplete"; setUi(p => ({ ...p, gameState: "gameComplete" })); } } }
-    else if (g.gameState === "gameComplete" || g.gameState === "gameOver") { if (x > GW / 2 - 100 && x < GW / 2 + 100 && y > 300 && y < 400) { g.score = 0; g.lives = 3; if (g.musicOn) music.start(); resetLevel(0); } }
+    if (g.gameState === "menu") { if (y > 357 && y < 413 && x > GW / 2 - 120 && x < GW / 2 + 120) startGame(); }
+    else if (g.gameState === "levelComplete") { if (x > GW / 2 - 120 && x < GW / 2 + 120 && y > 294 && y < 346) { music.playSFX("levelup"); if (g.level + 1 < LEVELS.length) resetLevel(g.level + 1); else { g.gameState = "gameComplete"; setUi(p => ({ ...p, gameState: "gameComplete" })); } } }
+    else if (g.gameState === "gameComplete" || g.gameState === "gameOver") { if (x > GW / 2 - 100 && x < GW / 2 + 100 && y > 300 && y < 420) { g.score = 0; g.lives = 3; if (g.musicOn) music.start(); resetLevel(0); } }
   };
 
   const tS = (a) => (e) => { e.preventDefault(); gs.current[a] = true; };
