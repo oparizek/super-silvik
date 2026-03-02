@@ -749,6 +749,16 @@ export default function MarioGame() {
                 item.y + 24 >= pl.y && item.y + 24 < pl.y + pl.h + 8 &&
                 item.vy > 0) {
               item.y = pl.y - 24; item.vy = 0;
+              // Prevent two mushrooms on the same platform
+              if (item.type === "growMushroom" || item.type === "shrinkMushroom") {
+                const duplicate = g.fallingItems.some(other =>
+                  other !== item &&
+                  (other.type === "growMushroom" || other.type === "shrinkMushroom") &&
+                  other.vy === 0 &&
+                  other.x + 24 > pl.x && other.x < pl.x + pl.w
+                );
+                if (duplicate) return false;
+              }
             }
           }
           // Player collects item
@@ -917,9 +927,11 @@ export default function MarioGame() {
           if (pl.drop) {
             const pulse = 0.85 + Math.sin(g.frame * 0.08) * 0.15;
             ctx.save();
-            ctx.translate(pl.x + pl.w / 2, pl.y + pl.h / 2 + 3);
+            ctx.translate(pl.x + pl.w / 2, pl.y + pl.h / 2 + 5);
             ctx.scale(pulse, pulse);
-            ctx.fillStyle = "#FFD700"; ctx.font = "bold 12px sans-serif"; ctx.textAlign = "center";
+            ctx.fillStyle = "#FFD700";
+            ctx.shadowColor = "#FFA000"; ctx.shadowBlur = 10;
+            ctx.font = "bold 20px sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
             ctx.fillText("?", 0, 0);
             ctx.restore();
           }
