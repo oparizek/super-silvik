@@ -9,6 +9,11 @@ const PW = 36;
 const PH = 44;
 const ENEMY_W = 34;
 const ENEMY_H = 30;
+const PIPE_W = 52;
+const PIPE_CAP_EXTRA = 6;
+const PIPE_H = 50;
+const PIPE_CAP_H = 18;
+const GROUND_Y = 440;
 
 // ─── RETRO MUSIC ENGINE (Web Audio chiptune) ────────────────────────────
 class RetroMusic {
@@ -333,6 +338,7 @@ const LEVELS = [
     clouds: [{ x: 100, y: 50, size: 1 }, { x: 350, y: 30, size: 1.3 }, { x: 600, y: 60, size: 0.9 }],
     mushrooms: [{ x: 210, y: 333 }],
     flowers: [{ x: 200, y: 150 }],
+    pipe: { x: 690 },
   },
   {
     name: "Kouzelný les 🌲",
@@ -356,6 +362,7 @@ const LEVELS = [
     fireflies: [{ x: 150, y: 100 }, { x: 300, y: 80 }, { x: 500, y: 120 }, { x: 650, y: 90 }, { x: 400, y: 200 }, { x: 100, y: 250 }],
     mushrooms: [{ x: 270, y: 283 }],
     flowers: [{ x: 75, y: 130 }],
+    pipe: { x: 680 },
   },
   {
     name: "Duhový hrad 🏰",
@@ -381,6 +388,7 @@ const LEVELS = [
     ],
     mushrooms: [{ x: 445, y: 223 }],
     flowers: [{ x: 125, y: 180 }],
+    pipe: { x: 680 },
   },
   {
     name: "Psí les 🐕🌲",
@@ -430,6 +438,7 @@ const LEVELS = [
     ],
     mushrooms: [{ x: 135, y: 343 }],
     flowers: [{ x: 705, y: 120 }],
+    pipe: { x: 700 },
   },
 ];
 
@@ -759,6 +768,82 @@ function drawDog(ctx, x, y, dir, frame, happy) {
   ctx.restore();
 }
 
+function drawPipe(ctx, x, isActive, frame) {
+  const pipeTopY = GROUND_Y - PIPE_H;
+  const capX = x - PIPE_CAP_EXTRA;
+  const capW = PIPE_W + PIPE_CAP_EXTRA * 2;
+
+  const bodyMid  = isActive ? "#2d8a00" : "#555";
+  const bodyLight = isActive ? "#40c800" : "#777";
+  const bodyDark  = isActive ? "#1a6600" : "#333";
+  const capMid   = isActive ? "#226600" : "#444";
+  const capLight = isActive ? "#35a000" : "#666";
+  const capDark  = isActive ? "#155200" : "#2a2a2a";
+  const capTop   = isActive ? "#55e000" : "#888";
+
+  // Body (from cap-bottom down into ground)
+  ctx.fillStyle = bodyMid;
+  ctx.fillRect(x, pipeTopY + PIPE_CAP_H, PIPE_W, PIPE_H - PIPE_CAP_H + 62);
+  ctx.fillStyle = bodyLight;
+  ctx.fillRect(x + 4, pipeTopY + PIPE_CAP_H, 10, PIPE_H - PIPE_CAP_H + 62);
+  ctx.fillStyle = bodyDark;
+  ctx.fillRect(x + PIPE_W - 8, pipeTopY + PIPE_CAP_H, 8, PIPE_H - PIPE_CAP_H + 62);
+
+  // Cap
+  ctx.fillStyle = capMid;
+  ctx.fillRect(capX, pipeTopY, capW, PIPE_CAP_H);
+  ctx.fillStyle = capLight;
+  ctx.fillRect(capX + 4, pipeTopY + 2, 14, PIPE_CAP_H - 4);
+  ctx.fillStyle = capDark;
+  ctx.fillRect(capX + capW - 8, pipeTopY, 8, PIPE_CAP_H);
+  ctx.fillStyle = capTop;
+  ctx.fillRect(capX + 2, pipeTopY, capW - 4, 3);
+
+  // Active: pulsing glow outline
+  if (isActive) {
+    const pulse = 0.4 + Math.sin(frame * 0.08) * 0.3;
+    ctx.save();
+    ctx.shadowColor = "#40ff00";
+    ctx.shadowBlur = 14 * pulse;
+    ctx.strokeStyle = `rgba(64,255,0,${pulse})`;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(capX, pipeTopY, capW, PIPE_CAP_H);
+    ctx.restore();
+  }
+}
+
+function drawPipeIndicator(ctx, x, isActive, frame) {
+  const pipeTopY = GROUND_Y - PIPE_H;
+  const postX = x - 36;
+  const signW = 28;
+  const signH = 22;
+  const signY = pipeTopY - 30;
+
+  // Wooden post
+  ctx.fillStyle = "#8B4513";
+  ctx.fillRect(postX + 11, signY + signH, 6, 38);
+
+  // Sign background
+  const blink = isActive && Math.sin(frame * 0.12) > 0;
+  ctx.fillStyle = isActive ? (blink ? "#00ff44" : "#00cc33") : "#555";
+  ctx.beginPath();
+  ctx.roundRect(postX, signY, signW, signH, 4);
+  ctx.fill();
+
+  // Sign border
+  ctx.strokeStyle = isActive ? "#005500" : "#333";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(postX, signY, signW, signH, 4);
+  ctx.stroke();
+
+  // Symbol
+  ctx.fillStyle = "#fff";
+  ctx.font = "bold 15px Arial";
+  ctx.textAlign = "center";
+  ctx.fillText(isActive ? "\u2193" : "\u2715", postX + signW / 2, signY + 16);
+}
+
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────
 export default function MarioGame() {
   const canvasRef = useRef(null);
@@ -768,17 +853,29 @@ export default function MarioGame() {
     collectedStars: [], collectedMoving: [], collectedMushrooms: [], collectedFlowers: [], particles: [], enemies: [], dogs: [],
     petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, gameState: "menu",
     brokenBlocks: [], fallingItems: [],
-    touchLeft: false, touchRight: false, touchJump: false, musicOn: true,
+    touchLeft: false, touchRight: false, touchJump: false, touchDown: false, musicOn: true,
+    pipeEnterTimer: 0,
   });
   const [ui, setUi] = useState({ score: 0, lives: 3, level: 0, gameState: "menu", levelName: "", musicOn: true });
+  const [inFullscreen, setInFullscreen] = useState(false);
   const animRef = useRef(null);
+
+  useEffect(() => {
+    const onChange = () => setInFullscreen(!!document.fullscreenElement || !!document.webkitFullscreenElement);
+    document.addEventListener("fullscreenchange", onChange);
+    document.addEventListener("webkitfullscreenchange", onChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", onChange);
+      document.removeEventListener("webkitfullscreenchange", onChange);
+    };
+  }, []);
 
   const resetLevel = useCallback((li) => {
     const g = gs.current;
     g.player = { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true };
     g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.collectedFlowers = []; g.particles = [];
     g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0;
-    g.brokenBlocks = []; g.fallingItems = []; g.gameState = "playing";
+    g.brokenBlocks = []; g.fallingItems = []; g.gameState = "playing"; g.pipeEnterTimer = 0;
     music.setMode("normal");
     const lvDogs = LEVELS[li].dogs || [];
     g.dogs = lvDogs.map(d => ({ ...d, dir: 1, frame: Math.random() * 100, happy: false, happyTimer: 0 }));
@@ -826,7 +923,8 @@ export default function MarioGame() {
       const g = gs.current; g.frame++;
       const lv = LEVELS[g.level] || LEVELS[0];
 
-      if (g.gameState === "playing") {
+      // Block A – movement physics: runs in playing AND levelComplete
+      if (g.gameState === "playing" || g.gameState === "levelComplete") {
         const p = g.player;
         if (g.invincibleTimer > 0) g.invincibleTimer--;
         if (g.keys["ArrowLeft"] || g.keys["a"] || g.touchLeft) { p.vx = -MOVE_SPEED; p.facingRight = false; }
@@ -844,7 +942,13 @@ export default function MarioGame() {
             p.y = pl.y - PH; p.vy = 0; p.onGround = true;
           }
         }
+        if (p.x < 0) p.x = 0; if (p.x + PW > GW) p.x = GW - PW;
+        if (p.y > GH + 50) { p.x = 50; p.y = 380; p.vx = 0; p.vy = 0; }
+      }
 
+      // Block B – gameplay logic: only "playing"
+      if (g.gameState === "playing") {
+        const p = g.player;
         // Breakable blocks – hit from below
         lv.platforms.forEach((pl, i) => {
           if (!pl.breakable || g.brokenBlocks.includes(i)) return;
@@ -899,9 +1003,6 @@ export default function MarioGame() {
           }
           return item.y < GH + 100;
         });
-
-        if (p.x < 0) p.x = 0; if (p.x + PW > GW) p.x = GW - PW;
-        if (p.y > GH + 50) { p.x = 50; p.y = 380; p.vx = 0; p.vy = 0; }
 
         // Enemies
         g.enemies.forEach(en => {
@@ -1007,6 +1108,32 @@ export default function MarioGame() {
         }
       }
 
+      // Block C – pipe entry detection: only "levelComplete"
+      if (g.gameState === "levelComplete" && lv.pipe) {
+        const p = g.player;
+        const nearPipe = p.x + PW > lv.pipe.x - PIPE_CAP_EXTRA
+                      && p.x < lv.pipe.x + PIPE_W + PIPE_CAP_EXTRA
+                      && p.onGround;
+        if (nearPipe && (g.keys["ArrowDown"] || g.keys["s"] || g.touchDown)) {
+          g.gameState = "enteringPipe";
+          g.pipeEnterTimer = 0;
+          p.x = lv.pipe.x + PIPE_W / 2 - PW / 2;
+          p.vx = 0;
+        }
+      }
+
+      // Block D – pipe entry animation: only "enteringPipe"
+      if (g.gameState === "enteringPipe") {
+        g.pipeEnterTimer++;
+        g.player.y += 3;
+        g.player.vx = 0;
+        if (g.pipeEnterTimer >= 50) {
+          music.playSFX("levelup");
+          if (g.level + 1 < LEVELS.length) resetLevel(g.level + 1);
+          else { g.gameState = "gameComplete"; setUi(prev => ({ ...prev, gameState: "gameComplete" })); }
+        }
+      }
+
       // ── DRAW ──
       const bgParts = lv.bg.match(/linear-gradient\(([^)]+)\)/);
       if (bgParts) {
@@ -1073,6 +1200,13 @@ export default function MarioGame() {
         }
       });
 
+      // Pipe
+      if (lv.pipe) {
+        const pipeActive = g.gameState === "levelComplete" || g.gameState === "enteringPipe";
+        drawPipeIndicator(ctx, lv.pipe.x, pipeActive, g.frame);
+        drawPipe(ctx, lv.pipe.x, pipeActive, g.frame);
+      }
+
       // Falling items from broken blocks
       g.fallingItems.forEach(item => {
         if (item.type === "star") drawStar(ctx, item.x + 12, item.y + 12, 14, g.frame, true);
@@ -1105,11 +1239,19 @@ export default function MarioGame() {
         ctx.fillStyle = pt.color; ctx.beginPath(); ctx.arc(pt.x, pt.y, 5 * (pt.life / maxLife), 0, Math.PI * 2); ctx.fill(); ctx.restore();
       });
 
-      if (g.gameState === "playing" || g.gameState === "levelComplete")
+      if (g.gameState === "playing" || g.gameState === "levelComplete") {
         drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0);
+      } else if (g.gameState === "enteringPipe") {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, GW, GROUND_Y - PIPE_H + PIPE_CAP_H);
+        ctx.clip();
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0);
+        ctx.restore();
+      }
 
       // HUD
-      if (g.gameState === "playing") {
+      if (g.gameState === "playing" || g.gameState === "levelComplete") {
         const total = lv.stars.length + (lv.movingStars ? lv.movingStars.length : 0);
         const collected = g.collectedStars.length + g.collectedMoving.length;
         // Big star counter top-left
@@ -1157,25 +1299,11 @@ export default function MarioGame() {
         ctx.fillText("\u25B6  HR\u00C1T!", 0, 9); ctx.restore();
       }
       if (g.gameState === "levelComplete") {
-        ctx.fillStyle = "rgba(0,0,50,0.6)"; ctx.fillRect(0, 0, GW, GH);
-        // Animated stars celebration
-        for (let i = 0; i < 12; i++) {
-          const sx = GW / 2 + Math.cos(g.frame * 0.04 + i * (Math.PI * 2 / 12)) * 180;
-          const sy = 230 + Math.sin(g.frame * 0.04 + i * (Math.PI * 2 / 12)) * 80;
-          drawStar(ctx, sx, sy, 8 + (i % 3) * 2, g.frame);
-        }
-        ctx.fillStyle = "#FFD700"; ctx.font = "bold 44px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
-        ctx.shadowColor = "#FF8F00"; ctx.shadowBlur = 20;
-        ctx.fillText("\uD83C\uDF89 Výborně! \uD83C\uDF89", GW / 2, 175); ctx.shadowBlur = 0;
-        ctx.fillStyle = "#FFEB3B"; ctx.font = "bold 26px 'Segoe UI', sans-serif";
-        ctx.fillText(lv.name + " hotovo! \uD83C\uDFC6", GW / 2, 220);
-        ctx.fillStyle = "#FFF"; ctx.font = "22px 'Segoe UI', sans-serif";
-        ctx.fillText("\u2B50 Hvězdy: " + g.score, GW / 2, 260);
-        const sp2 = 1 + Math.sin(g.frame * 0.06) * 0.06;
-        ctx.save(); ctx.translate(GW / 2, 320); ctx.scale(sp2, sp2);
-        ctx.fillStyle = "#4CAF50"; ctx.beginPath(); ctx.roundRect(-120, -26, 240, 52, 26); ctx.fill();
-        ctx.fillStyle = "#FFF"; ctx.font = "bold 22px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
-        ctx.fillText(g.level + 1 < LEVELS.length ? "D\u00E1l! \u25B6" : "V\u00FDsledky \u25B6", 0, 8); ctx.restore();
+        // Small hint banner – player must walk to the pipe and press down
+        ctx.fillStyle = "rgba(0,0,0,0.58)";
+        ctx.beginPath(); ctx.roundRect(GW / 2 - 175, 8, 350, 44, 12); ctx.fill();
+        ctx.fillStyle = "#FFD700"; ctx.font = "bold 19px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+        ctx.fillText("\uD83C\uDF89 V\u00FDbor\u011B! Jdi do trubky! \u2193", GW / 2, 35);
       }
       if (g.gameState === "gameOver") {
         ctx.fillStyle = "rgba(50,0,0,0.8)"; ctx.fillRect(0, 0, GW, GH);
@@ -1218,7 +1346,16 @@ export default function MarioGame() {
     const x = (e.clientX - rect.left) * (GW / rect.width), y = (e.clientY - rect.top) * (GH / rect.height);
     if (x > GW - 42 && x < GW - 10 && y > 44 && y < 66) { g.musicOn = music.toggle(); setUi(p => ({ ...p, musicOn: g.musicOn })); return; }
     if (g.gameState === "menu") { if (y > 357 && y < 413 && x > GW / 2 - 120 && x < GW / 2 + 120) startGame(); }
-    else if (g.gameState === "levelComplete") { if (x > GW / 2 - 120 && x < GW / 2 + 120 && y > 294 && y < 346) { music.playSFX("levelup"); if (g.level + 1 < LEVELS.length) resetLevel(g.level + 1); else { g.gameState = "gameComplete"; setUi(p => ({ ...p, gameState: "gameComplete" })); } } }
+    else if (g.gameState === "levelComplete") {
+      const lv2 = LEVELS[g.level] || LEVELS[0];
+      if (lv2.pipe) {
+        const pipeTopY = GROUND_Y - PIPE_H;
+        if (x >= lv2.pipe.x - PIPE_CAP_EXTRA && x <= lv2.pipe.x + PIPE_W + PIPE_CAP_EXTRA && y >= pipeTopY && y <= GROUND_Y + 62) {
+          g.gameState = "enteringPipe"; g.pipeEnterTimer = 0;
+          g.player.x = lv2.pipe.x + PIPE_W / 2 - PW / 2; g.player.vx = 0; return;
+        }
+      }
+    }
     else if (g.gameState === "gameComplete" || g.gameState === "gameOver") { if (x > GW / 2 - 100 && x < GW / 2 + 100 && y > 300 && y < 420) { g.score = 0; g.lives = 3; if (g.musicOn) music.start(); resetLevel(0); } }
   };
 
@@ -1234,8 +1371,14 @@ export default function MarioGame() {
           <div style={{ display: "flex", gap: 16, pointerEvents: "auto" }}>
             <button onTouchStart={tS("touchLeft")} onTouchEnd={tE("touchLeft")} onMouseDown={() => gs.current.touchLeft = true} onMouseUp={() => gs.current.touchLeft = false} onMouseLeave={() => gs.current.touchLeft = false} style={btn(false)}>◀</button>
             <button onTouchStart={tS("touchRight")} onTouchEnd={tE("touchRight")} onMouseDown={() => gs.current.touchRight = true} onMouseUp={() => gs.current.touchRight = false} onMouseLeave={() => gs.current.touchRight = false} style={btn(false)}>▶</button>
+            <button onTouchStart={tS("touchDown")} onTouchEnd={tE("touchDown")} onMouseDown={() => gs.current.touchDown = true} onMouseUp={() => gs.current.touchDown = false} onMouseLeave={() => gs.current.touchDown = false} style={btn(false)}>\u2193</button>
           </div>
-          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, textAlign: "center", pointerEvents: "none" }}>{ui.gameState === "playing" && ui.levelName}</div>
+          <div style={{ textAlign: "center" }}>
+            {!inFullscreen
+              ? <button onClick={requestFullscreen} style={{ pointerEvents: "auto", width: 72, height: 72, borderRadius: "50%", border: "3px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.18)", color: "#FFF", fontSize: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)", touchAction: "none", userSelect: "none" }}>\u26F6</button>
+              : <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, pointerEvents: "none" }}>{ui.gameState === "playing" && ui.levelName}</div>
+            }
+          </div>
           <div style={{ pointerEvents: "auto" }}>
             <button onTouchStart={tS("touchJump")} onTouchEnd={tE("touchJump")} onMouseDown={() => gs.current.touchJump = true} onMouseUp={() => gs.current.touchJump = false} onMouseLeave={() => gs.current.touchJump = false} style={btn(true)}>SKOK</button>
           </div>
