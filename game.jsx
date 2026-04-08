@@ -1371,7 +1371,7 @@ export default function MarioGame() {
           <div style={{ display: "flex", gap: 16, pointerEvents: "auto" }}>
             <button onTouchStart={tS("touchLeft")} onTouchEnd={tE("touchLeft")} onMouseDown={() => gs.current.touchLeft = true} onMouseUp={() => gs.current.touchLeft = false} onMouseLeave={() => gs.current.touchLeft = false} style={btn(false)}>◀</button>
             <button onTouchStart={tS("touchRight")} onTouchEnd={tE("touchRight")} onMouseDown={() => gs.current.touchRight = true} onMouseUp={() => gs.current.touchRight = false} onMouseLeave={() => gs.current.touchRight = false} style={btn(false)}>▶</button>
-            <button onTouchStart={tS("touchDown")} onTouchEnd={tE("touchDown")} onMouseDown={() => gs.current.touchDown = true} onMouseUp={() => gs.current.touchDown = false} onMouseLeave={() => gs.current.touchDown = false} style={btn(false)}>{"\u2193"}</button>
+            {ui.gameState === "levelComplete" && <button onTouchStart={tS("touchDown")} onTouchEnd={tE("touchDown")} onMouseDown={() => gs.current.touchDown = true} onMouseUp={() => gs.current.touchDown = false} onMouseLeave={() => gs.current.touchDown = false} style={btn(false)}>{"\u2193"}</button>}
           </div>
           <div style={{ textAlign: "center" }}>
             {!inFullscreen
