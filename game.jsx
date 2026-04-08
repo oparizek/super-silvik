@@ -857,7 +857,18 @@ export default function MarioGame() {
     pipeEnterTimer: 0,
   });
   const [ui, setUi] = useState({ score: 0, lives: 3, level: 0, gameState: "menu", levelName: "", musicOn: true });
+  const [inFullscreen, setInFullscreen] = useState(false);
   const animRef = useRef(null);
+
+  useEffect(() => {
+    const onChange = () => setInFullscreen(!!document.fullscreenElement || !!document.webkitFullscreenElement);
+    document.addEventListener("fullscreenchange", onChange);
+    document.addEventListener("webkitfullscreenchange", onChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", onChange);
+      document.removeEventListener("webkitfullscreenchange", onChange);
+    };
+  }, []);
 
   const resetLevel = useCallback((li) => {
     const g = gs.current;
@@ -1362,7 +1373,12 @@ export default function MarioGame() {
             <button onTouchStart={tS("touchRight")} onTouchEnd={tE("touchRight")} onMouseDown={() => gs.current.touchRight = true} onMouseUp={() => gs.current.touchRight = false} onMouseLeave={() => gs.current.touchRight = false} style={btn(false)}>▶</button>
             <button onTouchStart={tS("touchDown")} onTouchEnd={tE("touchDown")} onMouseDown={() => gs.current.touchDown = true} onMouseUp={() => gs.current.touchDown = false} onMouseLeave={() => gs.current.touchDown = false} style={btn(false)}>\u2193</button>
           </div>
-          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, textAlign: "center", pointerEvents: "none" }}>{ui.gameState === "playing" && ui.levelName}</div>
+          <div style={{ textAlign: "center" }}>
+            {!inFullscreen
+              ? <button onClick={requestFullscreen} style={{ pointerEvents: "auto", width: 72, height: 72, borderRadius: "50%", border: "3px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.18)", color: "#FFF", fontSize: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)", touchAction: "none", userSelect: "none" }}>\u26F6</button>
+              : <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, pointerEvents: "none" }}>{ui.gameState === "playing" && ui.levelName}</div>
+            }
+          </div>
           <div style={{ pointerEvents: "auto" }}>
             <button onTouchStart={tS("touchJump")} onTouchEnd={tE("touchJump")} onMouseDown={() => gs.current.touchJump = true} onMouseUp={() => gs.current.touchJump = false} onMouseLeave={() => gs.current.touchJump = false} style={btn(true)}>SKOK</button>
           </div>
