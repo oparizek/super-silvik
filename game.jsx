@@ -22,19 +22,19 @@ class RetroMusic {
     this.playing = false;
     this.nextNoteTime = 0;
     this.currentNote = 0;
-    this.tempo = 150;
+    this.tempo = 210;
     this.timerID = null;
     this.melody = [
-      660, 660, 0, 660, 0, 520, 660, 0,
+      659, 659, 0, 659, 0, 523, 659, 0,
       784, 0, 0, 0, 392, 0, 0, 0,
-      520, 0, 0, 392, 0, 0, 330, 0,
+      523, 0, 0, 392, 0, 0, 330, 0,
       0, 440, 0, 494, 0, 466, 440, 0,
-      392, 660, 784, 880, 0, 698, 784, 0,
-      660, 0, 520, 587, 494, 0, 0, 0,
-      520, 0, 0, 392, 0, 0, 330, 0,
+      392, 659, 784, 880, 0, 698, 784, 0,
+      659, 0, 523, 587, 494, 0, 0, 0,
+      523, 0, 0, 392, 0, 0, 330, 0,
       0, 440, 0, 494, 0, 466, 440, 0,
-      392, 660, 784, 880, 0, 698, 784, 0,
-      660, 0, 520, 587, 494, 0, 0, 0,
+      392, 659, 784, 880, 0, 698, 784, 0,
+      659, 0, 523, 587, 494, 0, 0, 0,
     ];
     this.bass = [
       131, 131, 0, 131, 0, 131, 165, 0,
@@ -49,24 +49,24 @@ class RetroMusic {
       165, 0, 131, 147, 123, 0, 0, 0,
     ];
     this.powerMelody = [
-      784, 0, 880, 0, 988, 0, 1047, 0,
-      988, 0, 880, 0, 784, 0, 0, 0,
-      784, 0, 880, 0, 988, 0, 880, 0,
-      784, 660, 784, 0, 0, 0, 0, 0,
-      880, 0, 988, 0, 1047, 0, 1175, 0,
-      1047, 0, 988, 0, 880, 0, 0, 0,
-      880, 0, 988, 0, 1047, 0, 988, 0,
-      880, 784, 880, 0, 0, 0, 0, 0,
+      659, 784, 880, 784, 659, 523, 659, 784,
+      880, 784, 659, 0, 659, 784, 880, 0,
+      784, 659, 523, 659, 784, 880, 784, 659,
+      784, 0, 659, 0, 523, 0, 0, 0,
+      784, 880, 988, 880, 784, 659, 784, 880,
+      988, 880, 784, 0, 784, 880, 988, 0,
+      880, 784, 659, 784, 880, 988, 880, 784,
+      784, 0, 880, 0, 784, 0, 659, 0,
     ];
     this.powerBass = [
-      196, 0, 220, 0, 247, 0, 262, 0,
-      247, 0, 220, 0, 196, 0, 0, 0,
-      196, 0, 220, 0, 247, 0, 220, 0,
-      196, 165, 196, 0, 0, 0, 0, 0,
-      220, 0, 247, 0, 262, 0, 294, 0,
-      262, 0, 247, 0, 220, 0, 0, 0,
-      220, 0, 247, 0, 262, 0, 247, 0,
-      220, 196, 220, 0, 0, 0, 0, 0,
+      165, 196, 220, 196, 165, 131, 165, 196,
+      220, 196, 165, 0, 165, 196, 220, 0,
+      196, 165, 131, 165, 196, 220, 196, 165,
+      196, 0, 165, 0, 131, 0, 0, 0,
+      196, 220, 247, 220, 196, 165, 196, 220,
+      247, 220, 196, 0, 196, 220, 247, 0,
+      220, 196, 165, 196, 220, 247, 220, 196,
+      196, 0, 220, 0, 196, 0, 165, 0,
     ];
     this.mode = "normal";
   }
@@ -97,86 +97,109 @@ class RetroMusic {
     const secondsPerBeat = 60.0 / tempo / 2;
     while (this.nextNoteTime < this.ctx.currentTime + 0.1) {
       const idx = this.currentNote % mel.length;
-      this.playNote(mel[idx], this.nextNoteTime, secondsPerBeat * 0.8, "square", 0.06);
-      this.playNote(bas[idx], this.nextNoteTime, secondsPerBeat * 0.8, "triangle", 0.07);
-      if (this.currentNote % 2 === 0) this.playPercussion(this.nextNoteTime);
+      this.playNote(mel[idx], this.nextNoteTime, secondsPerBeat * 0.55, "square", 0.07);
+      this.playNote(bas[idx], this.nextNoteTime, secondsPerBeat * 0.55, "triangle", 0.07);
+      this.playPercussion(this.nextNoteTime, this.currentNote % 2 === 0);
       this.nextNoteTime += secondsPerBeat;
       this.currentNote++;
     }
   }
 
-  playPercussion(time) {
+  playPercussion(time, isEven) {
     if (!this.ctx) return;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = "square";
-    osc.frequency.setValueAtTime(80, time);
-    osc.frequency.exponentialRampToValueAtTime(30, time + 0.05);
-    gain.gain.setValueAtTime(0.06, time);
-    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(time);
-    osc.stop(time + 0.06);
+    // Hi-hat on every beat
+    const h = this.ctx.createOscillator(), hg = this.ctx.createGain();
+    h.type = "triangle"; h.frequency.setValueAtTime(800, time);
+    h.frequency.exponentialRampToValueAtTime(1200, time + 0.02);
+    hg.gain.setValueAtTime(0.03, time); hg.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
+    h.connect(hg); hg.connect(this.ctx.destination); h.start(time); h.stop(time + 0.04);
+    // Kick drum on even beats
+    if (isEven) {
+      const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+      o.type = "square"; o.frequency.setValueAtTime(100, time);
+      o.frequency.exponentialRampToValueAtTime(40, time + 0.05);
+      g.gain.setValueAtTime(0.05, time); g.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+      o.connect(g); g.connect(this.ctx.destination); o.start(time); o.stop(time + 0.06);
+    }
   }
 
   playSFX(type) {
     if (!this.ctx) return;
+    if (this.ctx.state === "suspended") this.ctx.resume();
     const now = this.ctx.currentTime;
     if (type === "jump") {
+      // Quick rising sweep — snappy Mario jump
       const o = this.ctx.createOscillator(), g = this.ctx.createGain();
-      o.type = "square"; o.frequency.setValueAtTime(300, now); o.frequency.exponentialRampToValueAtTime(800, now + 0.15);
-      g.gain.setValueAtTime(0.08, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-      o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.16);
+      o.type = "square"; o.frequency.setValueAtTime(350, now); o.frequency.exponentialRampToValueAtTime(1000, now + 0.12);
+      g.gain.setValueAtTime(0.12, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+      o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.14);
     } else if (type === "stomp") {
+      // Deep thud + upward bounce
       const o = this.ctx.createOscillator(), g = this.ctx.createGain();
-      o.type = "sawtooth"; o.frequency.setValueAtTime(600, now); o.frequency.exponentialRampToValueAtTime(100, now + 0.2);
-      g.gain.setValueAtTime(0.1, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-      o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.26);
+      o.type = "sawtooth"; o.frequency.setValueAtTime(500, now); o.frequency.exponentialRampToValueAtTime(80, now + 0.18);
+      g.gain.setValueAtTime(0.13, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.23);
       const o2 = this.ctx.createOscillator(), g2 = this.ctx.createGain();
-      o2.type = "sine"; o2.frequency.setValueAtTime(400, now + 0.05); o2.frequency.exponentialRampToValueAtTime(900, now + 0.15);
-      g2.gain.setValueAtTime(0.06, now + 0.05); g2.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-      o2.connect(g2); g2.connect(this.ctx.destination); o2.start(now + 0.05); o2.stop(now + 0.21);
+      o2.type = "sine"; o2.frequency.setValueAtTime(300, now + 0.06); o2.frequency.exponentialRampToValueAtTime(800, now + 0.14);
+      g2.gain.setValueAtTime(0.08, now + 0.06); g2.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+      o2.connect(g2); g2.connect(this.ctx.destination); o2.start(now + 0.06); o2.stop(now + 0.19);
     } else if (type === "star") {
-      [523, 659, 784, 1047].forEach((f, i) => {
+      // 2-note Mario coin "bling"
+      [[988, 0], [1319, 0.06]].forEach(([f, t]) => {
         const o = this.ctx.createOscillator(), g = this.ctx.createGain();
-        o.type = "square"; o.frequency.setValueAtTime(f, now + i * 0.06);
-        g.gain.setValueAtTime(0.06, now + i * 0.06); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.1);
-        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.06); o.stop(now + i * 0.06 + 0.12);
+        o.type = "square"; o.frequency.setValueAtTime(f, now + t);
+        g.gain.setValueAtTime(0.18, now + t); g.gain.exponentialRampToValueAtTime(0.001, now + t + 0.08);
+        o.connect(g); g.connect(this.ctx.destination); o.start(now + t); o.stop(now + t + 0.1);
       });
     } else if (type === "levelup") {
-      [523, 587, 659, 698, 784, 880, 988, 1047].forEach((f, i) => {
+      // Stage-clear fanfare: G4 C5 E5 G5, then long G5
+      [392, 523, 659, 784].forEach((f, i) => {
         const o = this.ctx.createOscillator(), g = this.ctx.createGain();
-        o.type = "square"; o.frequency.setValueAtTime(f, now + i * 0.08);
-        g.gain.setValueAtTime(0.07, now + i * 0.08); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.15);
-        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.08); o.stop(now + i * 0.08 + 0.16);
+        o.type = "square"; o.frequency.setValueAtTime(f, now + i * 0.1);
+        g.gain.setValueAtTime(0.14, now + i * 0.1); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.12);
+        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.1); o.stop(now + i * 0.1 + 0.14);
       });
+      // Final long note
+      const ol = this.ctx.createOscillator(), gl = this.ctx.createGain();
+      ol.type = "square"; ol.frequency.setValueAtTime(784, now + 0.44);
+      gl.gain.setValueAtTime(0.14, now + 0.44); gl.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+      ol.connect(gl); gl.connect(this.ctx.destination); ol.start(now + 0.44); ol.stop(now + 0.95);
     } else if (type === "hurt") {
       const o = this.ctx.createOscillator(), g = this.ctx.createGain();
       o.type = "sawtooth"; o.frequency.setValueAtTime(200, now); o.frequency.exponentialRampToValueAtTime(50, now + 0.3);
-      g.gain.setValueAtTime(0.1, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      g.gain.setValueAtTime(0.13, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
       o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.31);
     } else if (type === "mushroom") {
-      [392, 523, 659, 784, 1047].forEach((f, i) => {
+      // Power-up ascending arpeggio
+      [392, 494, 659, 784, 1047].forEach((f, i) => {
         const o = this.ctx.createOscillator(), g = this.ctx.createGain();
         o.type = "square"; o.frequency.setValueAtTime(f, now + i * 0.07);
-        g.gain.setValueAtTime(0.09, now + i * 0.07); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.15);
-        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.07); o.stop(now + i * 0.07 + 0.16);
+        g.gain.setValueAtTime(0.15, now + i * 0.07); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.13);
+        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.07); o.stop(now + i * 0.07 + 0.15);
       });
     } else if (type === "break") {
+      // Percussive crack: 4 quick descending sawtooth bursts
       for (let i = 0; i < 4; i++) {
         const o = this.ctx.createOscillator(), g = this.ctx.createGain();
-        o.type = "sawtooth"; o.frequency.setValueAtTime(280 - i * 45, now + i * 0.04);
-        g.gain.setValueAtTime(0.09, now + i * 0.04); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.07);
-        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.04); o.stop(now + i * 0.04 + 0.09);
+        o.type = "sawtooth"; o.frequency.setValueAtTime(300 - i * 50, now + i * 0.035);
+        g.gain.setValueAtTime(0.13, now + i * 0.035); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.035 + 0.06);
+        o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.035); o.stop(now + i * 0.035 + 0.07);
       }
     } else if (type === "shrink") {
+      // Descending scale — getting smaller
       [784, 698, 587, 523, 440].forEach((f, i) => {
         const o = this.ctx.createOscillator(), g = this.ctx.createGain();
         o.type = "square"; o.frequency.setValueAtTime(f, now + i * 0.06);
-        g.gain.setValueAtTime(0.07, now + i * 0.06); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.1);
+        g.gain.setValueAtTime(0.12, now + i * 0.06); g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.1);
         o.connect(g); g.connect(this.ctx.destination); o.start(now + i * 0.06); o.stop(now + i * 0.06 + 0.11);
       });
+    } else if (type === "pipe") {
+      // Warp pipe swoosh — descending into the pipe
+      const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+      o.type = "sawtooth"; o.frequency.setValueAtTime(500, now);
+      o.frequency.exponentialRampToValueAtTime(80, now + 0.5);
+      g.gain.setValueAtTime(0.12, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+      o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.55);
     }
   }
 
@@ -1124,6 +1147,7 @@ export default function MarioGame() {
 
       // Block D – pipe entry animation: only "enteringPipe"
       if (g.gameState === "enteringPipe") {
+        if (g.pipeEnterTimer === 0) music.playSFX("pipe");
         g.pipeEnterTimer++;
         g.player.y += 3;
         g.player.vx = 0;
@@ -1371,11 +1395,11 @@ export default function MarioGame() {
           <div style={{ display: "flex", gap: 16, pointerEvents: "auto" }}>
             <button onTouchStart={tS("touchLeft")} onTouchEnd={tE("touchLeft")} onMouseDown={() => gs.current.touchLeft = true} onMouseUp={() => gs.current.touchLeft = false} onMouseLeave={() => gs.current.touchLeft = false} style={btn(false)}>◀</button>
             <button onTouchStart={tS("touchRight")} onTouchEnd={tE("touchRight")} onMouseDown={() => gs.current.touchRight = true} onMouseUp={() => gs.current.touchRight = false} onMouseLeave={() => gs.current.touchRight = false} style={btn(false)}>▶</button>
-            <button onTouchStart={tS("touchDown")} onTouchEnd={tE("touchDown")} onMouseDown={() => gs.current.touchDown = true} onMouseUp={() => gs.current.touchDown = false} onMouseLeave={() => gs.current.touchDown = false} style={btn(false)}>\u2193</button>
+            {ui.gameState === "levelComplete" && <button onTouchStart={tS("touchDown")} onTouchEnd={tE("touchDown")} onMouseDown={() => gs.current.touchDown = true} onMouseUp={() => gs.current.touchDown = false} onMouseLeave={() => gs.current.touchDown = false} style={btn(false)}>{"\u2193"}</button>}
           </div>
           <div style={{ textAlign: "center" }}>
             {!inFullscreen
-              ? <button onClick={requestFullscreen} style={{ pointerEvents: "auto", width: 72, height: 72, borderRadius: "50%", border: "3px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.18)", color: "#FFF", fontSize: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)", touchAction: "none", userSelect: "none" }}>\u26F6</button>
+              ? <button onClick={requestFullscreen} style={{ pointerEvents: "auto", width: 72, height: 72, borderRadius: "50%", border: "3px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.18)", color: "#FFF", fontSize: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)", touchAction: "none", userSelect: "none" }}>{"\u26F6"}</button>
               : <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, pointerEvents: "none" }}>{ui.gameState === "playing" && ui.levelName}</div>
             }
           </div>
