@@ -1371,11 +1371,11 @@ export default function MarioGame() {
           <div style={{ display: "flex", gap: 16, pointerEvents: "auto" }}>
             <button onTouchStart={tS("touchLeft")} onTouchEnd={tE("touchLeft")} onMouseDown={() => gs.current.touchLeft = true} onMouseUp={() => gs.current.touchLeft = false} onMouseLeave={() => gs.current.touchLeft = false} style={btn(false)}>◀</button>
             <button onTouchStart={tS("touchRight")} onTouchEnd={tE("touchRight")} onMouseDown={() => gs.current.touchRight = true} onMouseUp={() => gs.current.touchRight = false} onMouseLeave={() => gs.current.touchRight = false} style={btn(false)}>▶</button>
-            <button onTouchStart={tS("touchDown")} onTouchEnd={tE("touchDown")} onMouseDown={() => gs.current.touchDown = true} onMouseUp={() => gs.current.touchDown = false} onMouseLeave={() => gs.current.touchDown = false} style={btn(false)}>\u2193</button>
+            <button onTouchStart={tS("touchDown")} onTouchEnd={tE("touchDown")} onMouseDown={() => gs.current.touchDown = true} onMouseUp={() => gs.current.touchDown = false} onMouseLeave={() => gs.current.touchDown = false} style={btn(false)}>{"\u2193"}</button>
           </div>
           <div style={{ textAlign: "center" }}>
             {!inFullscreen
-              ? <button onClick={requestFullscreen} style={{ pointerEvents: "auto", width: 72, height: 72, borderRadius: "50%", border: "3px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.18)", color: "#FFF", fontSize: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)", touchAction: "none", userSelect: "none" }}>\u26F6</button>
+              ? <button onClick={requestFullscreen} style={{ pointerEvents: "auto", width: 72, height: 72, borderRadius: "50%", border: "3px solid rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.18)", color: "#FFF", fontSize: 28, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(8px)", touchAction: "none", userSelect: "none" }}>{"\u26F6"}</button>
               : <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12, pointerEvents: "none" }}>{ui.gameState === "playing" && ui.levelName}</div>
             }
           </div>
