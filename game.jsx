@@ -1131,12 +1131,12 @@ export default function MarioGame() {
               for (let j = 0; j < 16; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.5) * 7, life: 40, color: ["#FFD700", "#FFEB3B", "#FFF176", "#FF8F00"][j % 4] });
               setUi(prev => ({ ...prev, score: g.score }));
             } else if (item.type === "growMushroom") {
-              g.mushroomTimer = 500; g.shrinkTimer = 0; g.captainAmericaTimer = 0;
+              g.mushroomTimer = 500; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.hulkTimer = 0;
               music.playSFX("mushroom");
               if (g.musicOn) music.setMode("power");
               for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#D32F2F", "#FF5252", "#FFFFFF", "#FF8A65", "#FFD700"][j % 5] });
             } else if (item.type === "shrinkMushroom") {
-              g.shrinkTimer = 400; g.mushroomTimer = 0; g.captainAmericaTimer = 0;
+              g.shrinkTimer = 400; g.mushroomTimer = 0; g.captainAmericaTimer = 0; g.hulkTimer = 0;
               music.playSFX("shrink");
               music.setMode("normal");
               for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#1565C0", "#42A5F5", "#FFFFFF", "#0D47A1", "#29B6F6"][j % 5] });
@@ -1232,7 +1232,7 @@ export default function MarioGame() {
           const dx = p.x + PW / 2 - mush.x, dy = p.y + PH / 2 - mush.y;
           if (Math.sqrt(dx * dx + dy * dy) < 40) {
             g.collectedMushrooms.push(i);
-            g.mushroomTimer = 600; g.captainAmericaTimer = 0;
+            g.mushroomTimer = 600; g.captainAmericaTimer = 0; g.hulkTimer = 0;
             music.playSFX("mushroom");
             if (g.musicOn) music.setMode("power");
             for (let j = 0; j < 20; j++) g.particles.push({ x: mush.x, y: mush.y, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#D32F2F", "#FF5252", "#FFFFFF", "#FF8A65", "#FFD700"][j % 5] });
@@ -1246,7 +1246,7 @@ export default function MarioGame() {
           if (Math.sqrt(dx * dx + dy * dy) < 40) {
             g.collectedFlowers.push(i);
             g.captainAmericaTimer = 600;
-            g.mushroomTimer = 0; g.shrinkTimer = 0;
+            g.mushroomTimer = 0; g.shrinkTimer = 0; g.hulkTimer = 0;
             music.playSFX("mushroom");
             if (g.musicOn) music.setMode("power");
             for (let j = 0; j < 22; j++) g.particles.push({ x: fl.x + 16, y: fl.y + 16, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 1.5) * 6, life: 55, maxLife: 55, color: ["#FF4081","#FFFFFF","#1565C0","#D32F2F","#FFD700"][j % 5] });
