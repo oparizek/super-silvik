@@ -621,7 +621,7 @@ function drawCaptainAmericaPlayer(ctx, x, y, facingRight, frame, invincible) {
   ctx.restore();
 }
 
-function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false, captainAmericaPower = false) {
+function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false, captainAmericaPower = false, starPower = false) {
   if (captainAmericaPower) {
     const pcx = x + PW / 2, pcy = y + PH / 2;
     ctx.save(); ctx.translate(pcx, pcy); ctx.scale(1.15, 1.15); ctx.translate(-pcx, -pcy);
@@ -643,6 +643,7 @@ function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = f
   const cx = x + PW / 2;
   const bob = Math.sin(frame * 0.15) * 1.5;
   if (invincible && Math.floor(frame / 3) % 2 === 0) ctx.globalAlpha = 0.4;
+  if (starPower && Math.floor(frame / 4) % 2 === 0) ctx.globalAlpha = 0.55;
 
   ctx.fillStyle = "rgba(0,0,0,0.15)";
   ctx.beginPath(); ctx.ellipse(cx, y + PH, 14, 4, 0, 0, Math.PI * 2); ctx.fill();
@@ -681,6 +682,17 @@ function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = f
   ctx.beginPath(); ctx.arc(cx + 5.5 + f * 0.5, y + 10 + bob, 0.8, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = "#C62828"; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.arc(cx, y + 14 + bob, 3, 0.1, Math.PI - 0.1); ctx.stroke();
+  if (starPower) {
+    ctx.save();
+    ctx.globalAlpha = 0.35 + Math.sin(frame * 0.25) * 0.2;
+    ctx.shadowColor = "#FFD700"; ctx.shadowBlur = 18 + Math.sin(frame * 0.3) * 6;
+    ctx.strokeStyle = "#FFD700"; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(x + PW / 2, y + PH / 2, 26, 0, Math.PI * 2); ctx.stroke();
+    const angle = (frame * 0.08) % (Math.PI * 2);
+    ctx.fillStyle = "#FFD700"; ctx.font = "10px sans-serif"; ctx.textAlign = "center";
+    ctx.fillText("★", x + PW / 2 + Math.cos(angle) * 22, y + PH / 2 + Math.sin(angle) * 22);
+    ctx.restore();
+  }
   ctx.restore();
 }
 
@@ -874,7 +886,7 @@ export default function MarioGame() {
     player: { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true },
     keys: {}, frame: 0, score: 0, lives: 3, level: 0,
     collectedStars: [], collectedMoving: [], collectedMushrooms: [], collectedFlowers: [], particles: [], enemies: [], dogs: [],
-    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, gameState: "menu",
+    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, starPowerTimer: 0, gameState: "menu",
     brokenBlocks: [], fallingItems: [],
     touchLeft: false, touchRight: false, touchJump: false, touchDown: false, musicOn: true,
     pipeEnterTimer: 0,
@@ -897,7 +909,7 @@ export default function MarioGame() {
     const g = gs.current;
     g.player = { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true };
     g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.collectedFlowers = []; g.particles = [];
-    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0;
+    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.starPowerTimer = 0;
     g.brokenBlocks = []; g.fallingItems = []; g.gameState = "playing"; g.pipeEnterTimer = 0;
     music.setMode("normal");
     const lvDogs = LEVELS[li].dogs || [];
@@ -992,6 +1004,9 @@ export default function MarioGame() {
         // Captain America timer
         if (g.captainAmericaTimer > 0) { g.captainAmericaTimer--; if (g.captainAmericaTimer === 0) music.setMode("normal"); }
 
+        // Star power timer
+        if (g.starPowerTimer > 0) g.starPowerTimer--;
+
         // Falling items physics + collection
         g.fallingItems = g.fallingItems.filter(item => {
           item.vy += GRAVITY * 0.7;
@@ -1046,6 +1061,13 @@ export default function MarioGame() {
               music.playSFX("stomp");
               for (let j = 0; j < 10; j++) g.particles.push({ x: en.x + ENEMY_W / 2, y: en.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 1) * 5, life: 35, color: ["#FFD700", "#FF5722", "#FF9800", "#FFEB3B"][j % 4] });
               setUi(prev => ({ ...prev, score: g.score }));
+            } else if (g.starPowerTimer > 0) {
+              en.alive = false; en.flyingAway = true;
+              en.flyVx = (p.x < en.x ? 1 : -1) * 6; en.flyVy = -8; en.flyRot = 0;
+              g.score += 100;
+              music.playSFX("stomp");
+              for (let j = 0; j < 24; j++) g.particles.push({ x: en.x + ENEMY_W / 2, y: en.y + ENEMY_H / 2, vx: (Math.random() - 0.5) * 12, vy: (Math.random() - 0.5) * 12, life: 50, maxLife: 50, color: ["#FFD700","#FF4081","#E040FB","#69F0AE","#FF6E40","#40C4FF","#FFFFFF"][j % 7] });
+              setUi(prev => ({ ...prev, score: g.score }));
             } else if (g.invincibleTimer <= 0) {
               g.invincibleTimer = 40;
               p.vy = -5; p.vx = p.x < en.x ? -3 : 3;
@@ -1058,7 +1080,7 @@ export default function MarioGame() {
           if (g.collectedStars.includes(i)) return;
           const dx = p.x + PW / 2 - star.x, dy = p.y + PH / 2 - star.y;
           if (Math.sqrt(dx * dx + dy * dy) < 42) {
-            g.collectedStars.push(i); g.score += 10; music.playSFX("star");
+            g.collectedStars.push(i); g.score += 10; music.playSFX("star"); g.starPowerTimer = 300;
             for (let j = 0; j < 16; j++) g.particles.push({ x: star.x, y: star.y, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.5) * 7, life: 40, color: ["#FFD700", "#FFEB3B", "#FFF176", "#FF8F00", "#FF4081", "#FF80AB"][j % 6] });
             setUi(prev => ({ ...prev, score: g.score }));
           }
@@ -1070,7 +1092,7 @@ export default function MarioGame() {
           if (ms.y <= ms.minY || ms.y >= ms.maxY) ms.dy *= -1;
           const dx = p.x + PW / 2 - ms.x, dy = p.y + PH / 2 - ms.y;
           if (Math.sqrt(dx * dx + dy * dy) < 42) {
-            g.collectedMoving.push(i); g.score += 25; music.playSFX("star");
+            g.collectedMoving.push(i); g.score += 25; music.playSFX("star"); g.starPowerTimer = 300;
             for (let j = 0; j < 20; j++) g.particles.push({ x: ms.x, y: ms.y, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8, life: 50, color: ["#FF4081", "#E040FB", "#7C4DFF", "#448AFF", "#FFD700", "#69F0AE"][j % 6] });
             setUi(prev => ({ ...prev, score: g.score }));
           }
@@ -1264,13 +1286,13 @@ export default function MarioGame() {
       });
 
       if (g.gameState === "playing" || g.gameState === "levelComplete") {
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0);
       } else if (g.gameState === "enteringPipe") {
         ctx.save();
         ctx.beginPath();
         ctx.rect(0, 0, GW, GROUND_Y - PIPE_H + PIPE_CAP_H);
         ctx.clip();
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0);
         ctx.restore();
       }
 
