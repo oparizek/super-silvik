@@ -403,6 +403,7 @@ const LEVELS = [
       { x: 460, y: 120, w: 130, h: 20, color: "#FF69B4", breakable: true, drop: "shrinkMushroom" },
       { x: 120, y: 200, w: 130, h: 20, color: "#FF6B6B" },
       { x: 610, y: 150, w: 140, h: 20, color: "#FFD700" },
+      { x: 520, y: 300, w: 100, h: 20, color: "#66BB6A", breakable: true, drop: "greenMushroom" },
     ],
     stars: [{ x: 120, y: 320 }, { x: 270, y: 260 }, { x: 420, y: 200 }, { x: 570, y: 260 }, { x: 700, y: 200 }, { x: 320, y: 120 }, { x: 520, y: 80 }, { x: 170, y: 160 }, { x: 680, y: 110 }, { x: 400, y: 400 }],
     eyeExercise: "convergence",
@@ -428,6 +429,7 @@ const LEVELS = [
       { x: 350, y: 160, w: 110, h: 20, color: "#5c3d2e", breakable: true, drop: "shrinkMushroom" },
       { x: 560, y: 190, w: 100, h: 20, color: "#5c3d2e" },
       { x: 700, y: 140, w: 90, h: 20, color: "#5c3d2e" },
+      { x: 80, y: 260, w: 90, h: 20, color: "#3d5c2e", breakable: true, drop: "greenMushroom" },
     ],
     stars: [
       { x: 120, y: 320 }, { x: 280, y: 270 }, { x: 460, y: 220 }, { x: 630, y: 280 },
@@ -689,8 +691,8 @@ function drawHulkPlayer(ctx, x, y, facingRight, frame, invincible) {
   ctx.fillStyle = "#43A047";
   ctx.beginPath(); ctx.arc(cx, y + 8 + bob, 13, 0, Math.PI * 2); ctx.fill();
 
-  // ── HAIR: dark green messy ──
-  ctx.fillStyle = "#1B5E20";
+  // ── HAIR: black messy ──
+  ctx.fillStyle = "#111111";
   ctx.beginPath(); ctx.arc(cx, y + 1 + bob, 13, Math.PI, Math.PI * 2); ctx.fill();
   ctx.fillRect(cx - 13, y - 2 + bob, 26, 5);
   // messy tufts
