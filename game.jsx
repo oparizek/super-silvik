@@ -351,6 +351,7 @@ const LEVELS = [
       { x: 200, y: 170, w: 120, h: 20, color: "#8B4513" },
       { x: 450, y: 130, w: 100, h: 20, color: "#8B4513", breakable: true, drop: "growMushroom" },
       { x: 650, y: 350, w: 100, h: 20, color: "#8B4513", breakable: true, drop: "shrinkMushroom" },
+      { x: 300, y: 200, w: 100, h: 20, color: "#4a7c3f", breakable: true, drop: "greenMushroom" },
     ],
     stars: [{ x: 190, y: 310 }, { x: 390, y: 250 }, { x: 590, y: 180 }, { x: 240, y: 130 }, { x: 480, y: 90 }, { x: 690, y: 310 }, { x: 100, y: 400 }, { x: 500, y: 400 }],
     eyeExercise: "tracking",
@@ -375,6 +376,7 @@ const LEVELS = [
       { x: 520, y: 260, w: 140, h: 20, color: "#5c3d2e" },
       { x: 630, y: 180, w: 140, h: 20, color: "#5c3d2e", breakable: true, drop: "growMushroom" },
       { x: 70, y: 150, w: 140, h: 20, color: "#5c3d2e" },
+      { x: 450, y: 180, w: 100, h: 20, color: "#3d5c2e", breakable: true, drop: "greenMushroom" },
     ],
     stars: [{ x: 80, y: 310 }, { x: 250, y: 260 }, { x: 430, y: 310 }, { x: 340, y: 160 }, { x: 580, y: 220 }, { x: 720, y: 140 }, { x: 130, y: 110 }, { x: 300, y: 400 }, { x: 650, y: 400 }],
     eyeExercise: "saccade",
@@ -509,6 +511,28 @@ function drawShrinkMushroom(ctx, x, y, frame) {
   ctx.restore();
 }
 
+function drawGreenMushroom(ctx, x, y, frame) {
+  const bob = Math.sin(frame * 0.06 + x * 0.01) * 3;
+  ctx.save();
+  ctx.shadowColor = "rgba(50,200,50,0.6)"; ctx.shadowBlur = 16;
+  // stem
+  ctx.fillStyle = "#F5DEB3";
+  ctx.beginPath(); ctx.roundRect(x + 8, y + 20 + bob, 16, 14, [2, 2, 4, 4]); ctx.fill();
+  ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(x + 10, y + 21 + bob, 12, 2);
+  // cap
+  ctx.fillStyle = "#2E7D32";
+  ctx.beginPath(); ctx.ellipse(x + 16, y + 20 + bob, 18, 14, 0, Math.PI, 0); ctx.fill();
+  ctx.strokeStyle = "#1B5E20"; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.ellipse(x + 16, y + 20 + bob, 18, 14, 0, Math.PI, 0); ctx.stroke();
+  // white dots
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "#FFF";
+  ctx.beginPath(); ctx.arc(x + 9, y + 13 + bob, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 16, y + 8 + bob, 4.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(x + 23, y + 13 + bob, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
 function drawFlower(ctx, x, y, frame) {
   const bob = Math.sin(frame * 0.07 + x * 0.01) * 3;
   const cx = x + 16, cy = y + 16 + bob;
@@ -621,7 +645,86 @@ function drawCaptainAmericaPlayer(ctx, x, y, facingRight, frame, invincible) {
   ctx.restore();
 }
 
-function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false, captainAmericaPower = false, starPower = false) {
+function drawHulkPlayer(ctx, x, y, facingRight, frame, invincible) {
+  ctx.save();
+  const f = facingRight ? 1 : -1;
+  const cx = x + PW / 2;
+  const bob = Math.sin(frame * 0.15) * 1.5;
+
+  if (invincible && Math.floor(frame / 3) % 2 === 0) ctx.globalAlpha = 0.4;
+
+  // Ground shadow
+  ctx.fillStyle = "rgba(0,0,0,0.18)";
+  ctx.beginPath(); ctx.ellipse(cx, y + PH, 18, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+  // ── LEGS: purple shorts ──
+  ctx.fillStyle = "#6A1B9A";
+  ctx.fillRect(cx - 14, y + 30 + bob, 12, 14);
+  ctx.fillRect(cx + 2, y + 30 + bob, 12, 14);
+  // darker inner line
+  ctx.fillStyle = "#4A148C";
+  ctx.fillRect(cx - 2, y + 30 + bob, 4, 14);
+
+  // ── TORSO: wide green muscular chest ──
+  ctx.fillStyle = "#388E3C";
+  ctx.beginPath(); ctx.roundRect(cx - 16, y + 12 + bob, 32, 20, 4); ctx.fill();
+  // chest highlight
+  ctx.fillStyle = "#43A047";
+  ctx.beginPath(); ctx.roundRect(cx - 12, y + 13 + bob, 10, 8, 3); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(cx + 2, y + 13 + bob, 10, 8, 3); ctx.fill();
+
+  // ── ARMS: thick green ──
+  const armSwing = Math.sin(frame * 0.2) * 8;
+  // left arm
+  ctx.fillStyle = "#43A047";
+  ctx.fillRect(cx - 25, y + 13 + bob + armSwing * 0.3, 10, 16);
+  // left fist
+  ctx.beginPath(); ctx.arc(cx - 20, y + 30 + bob + armSwing * 0.3, 6, 0, Math.PI * 2); ctx.fill();
+  // right arm
+  ctx.fillRect(cx + 15, y + 13 + bob - armSwing * 0.3, 10, 16);
+  // right fist
+  ctx.beginPath(); ctx.arc(cx + 20, y + 30 + bob - armSwing * 0.3, 6, 0, Math.PI * 2); ctx.fill();
+
+  // ── HEAD: large green ──
+  ctx.fillStyle = "#43A047";
+  ctx.beginPath(); ctx.arc(cx, y + 8 + bob, 13, 0, Math.PI * 2); ctx.fill();
+
+  // ── HAIR: dark green messy ──
+  ctx.fillStyle = "#1B5E20";
+  ctx.beginPath(); ctx.arc(cx, y + 1 + bob, 13, Math.PI, Math.PI * 2); ctx.fill();
+  ctx.fillRect(cx - 13, y - 2 + bob, 26, 5);
+  // messy tufts
+  ctx.beginPath(); ctx.arc(cx - 7 * f, y - 1 + bob, 6, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 3 * f, y - 3 + bob, 5, 0, Math.PI * 2); ctx.fill();
+
+  // ── ANGRY BROWS ──
+  ctx.strokeStyle = "#1B5E20"; ctx.lineWidth = 3; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(cx - 11, y + 5 + bob); ctx.lineTo(cx - 3, y + 7 + bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx + 11, y + 5 + bob); ctx.lineTo(cx + 3, y + 7 + bob); ctx.stroke();
+
+  // ── EYES: small angry ──
+  ctx.fillStyle = "#FFF";
+  ctx.beginPath(); ctx.arc(cx - 5, y + 9 + bob, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 5, y + 9 + bob, 3, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#1A237E";
+  ctx.beginPath(); ctx.arc(cx - 5 + f * 0.5, y + 9 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 5 + f * 0.5, y + 9 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
+
+  // ── GRIMACE MOUTH ──
+  ctx.strokeStyle = "#1B5E20"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx - 5, y + 14 + bob); ctx.lineTo(cx + 5, y + 14 + bob); ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false, captainAmericaPower = false, starPower = false, hulkPower = false) {
+  if (hulkPower) {
+    const pcx = x + PW / 2, pcy = y + PH / 2;
+    ctx.save(); ctx.translate(pcx, pcy); ctx.scale(2.0, 2.0); ctx.translate(-pcx, -pcy);
+    drawHulkPlayer(ctx, x, y, facingRight, frame, invincible);
+    ctx.restore();
+    return;
+  }
   if (captainAmericaPower) {
     const pcx = x + PW / 2, pcy = y + PH / 2;
     ctx.save(); ctx.translate(pcx, pcy); ctx.scale(1.15, 1.15); ctx.translate(-pcx, -pcy);
@@ -886,7 +989,7 @@ export default function MarioGame() {
     player: { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true },
     keys: {}, frame: 0, score: 0, lives: 3, level: 0,
     collectedStars: [], collectedMoving: [], collectedMushrooms: [], collectedFlowers: [], particles: [], enemies: [], dogs: [],
-    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, starPowerTimer: 0, gameState: "menu",
+    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, starPowerTimer: 0, hulkTimer: 0, gameState: "menu",
     brokenBlocks: [], fallingItems: [],
     touchLeft: false, touchRight: false, touchJump: false, touchDown: false, musicOn: true,
     pipeEnterTimer: 0,
@@ -909,7 +1012,7 @@ export default function MarioGame() {
     const g = gs.current;
     g.player = { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true };
     g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.collectedFlowers = []; g.particles = [];
-    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.starPowerTimer = 0;
+    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.starPowerTimer = 0; g.hulkTimer = 0;
     g.brokenBlocks = []; g.fallingItems = []; g.gameState = "playing"; g.pipeEnterTimer = 0;
     music.setMode("normal");
     const lvDogs = LEVELS[li].dogs || [];
@@ -1006,6 +1109,7 @@ export default function MarioGame() {
 
         // Star power timer
         if (g.starPowerTimer > 0) g.starPowerTimer--;
+        if (g.hulkTimer > 0) { g.hulkTimer--; if (g.hulkTimer === 0) music.setMode("normal"); }
 
         // Falling items physics + collection
         g.fallingItems = g.fallingItems.filter(item => {
@@ -1036,6 +1140,11 @@ export default function MarioGame() {
               music.playSFX("shrink");
               music.setMode("normal");
               for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#1565C0", "#42A5F5", "#FFFFFF", "#0D47A1", "#29B6F6"][j % 5] });
+            } else if (item.type === "greenMushroom") {
+              g.hulkTimer = 600; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0;
+              music.playSFX("mushroom");
+              if (g.musicOn) music.setMode("power");
+              for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#43A047", "#66BB6A", "#FFFFFF", "#1B5E20", "#A5D6A7"][j % 5] });
             }
             return false;
           }
@@ -1258,6 +1367,7 @@ export default function MarioGame() {
         if (item.type === "star") drawStar(ctx, item.x + 12, item.y + 12, 14, g.frame, true);
         else if (item.type === "growMushroom") drawMushroom(ctx, item.x, item.y, g.frame);
         else if (item.type === "shrinkMushroom") drawShrinkMushroom(ctx, item.x, item.y, g.frame);
+        else if (item.type === "greenMushroom") drawGreenMushroom(ctx, item.x, item.y, g.frame);
       });
 
       lv.mushrooms?.forEach((mush, i) => { if (!g.collectedMushrooms.includes(i)) drawMushroom(ctx, mush.x - 16, mush.y - 17, g.frame); });
@@ -1286,13 +1396,13 @@ export default function MarioGame() {
       });
 
       if (g.gameState === "playing" || g.gameState === "levelComplete") {
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0, g.hulkTimer > 0);
       } else if (g.gameState === "enteringPipe") {
         ctx.save();
         ctx.beginPath();
         ctx.rect(0, 0, GW, GROUND_Y - PIPE_H + PIPE_CAP_H);
         ctx.clip();
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0, g.hulkTimer > 0);
         ctx.restore();
       }
 
