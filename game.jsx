@@ -467,6 +467,43 @@ const LEVELS = [
     flowers: [{ x: 705, y: 120 }],
     pipe: { x: 700 },
   },
+  {
+    name: "Podzemní jeskyně 💎",
+    bg: "linear-gradient(180deg, #0a0a12 0%, #1a0f0a 25%, #12101e 60%, #080810 100%)",
+    platforms: [
+      { x: 0, y: 440, w: 800, h: 60, color: "#2a1a0a" },
+      { x: 80, y: 370, w: 110, h: 20, color: "#3d2b1a" },
+      { x: 250, y: 310, w: 100, h: 20, color: "#3d2b1a", breakable: true, drop: "star" },
+      { x: 420, y: 260, w: 110, h: 20, color: "#3d2b1a" },
+      { x: 600, y: 320, w: 100, h: 20, color: "#3d2b1a", breakable: true, drop: "growMushroom" },
+      { x: 160, y: 210, w: 100, h: 20, color: "#3d2b1a" },
+      { x: 350, y: 160, w: 110, h: 20, color: "#3d2b1a", breakable: true, drop: "shrinkMushroom" },
+      { x: 560, y: 185, w: 100, h: 20, color: "#3d2b1a" },
+      { x: 700, y: 140, w: 90, h: 20, color: "#3d2b1a" },
+      { x: 80, y: 260, w: 90, h: 20, color: "#2a1f12", breakable: true, drop: "greenMushroom" },
+    ],
+    stars: [
+      { x: 120, y: 330 }, { x: 280, y: 270 }, { x: 460, y: 220 }, { x: 630, y: 280 },
+      { x: 190, y: 170 }, { x: 390, y: 120 }, { x: 590, y: 145 }, { x: 730, y: 100 },
+      { x: 400, y: 400 }, { x: 150, y: 400 },
+    ],
+    eyeExercise: "tracking",
+    movingStars: [
+      { x: 100, y: 120, dx: 2, dy: 0.8, minX: 50, maxX: 400, minY: 80, maxY: 200 },
+      { x: 600, y: 100, dx: -1.5, dy: 1, minX: 400, maxX: 750, minY: 80, maxY: 200 },
+    ],
+    crystals: [
+      { x: 80, y: 80 }, { x: 200, y: 50 }, { x: 350, y: 70 },
+      { x: 500, y: 40 }, { x: 650, y: 65 }, { x: 750, y: 90 },
+      { x: 130, y: 200 }, { x: 420, y: 150 }, { x: 680, y: 180 },
+    ],
+    stalactites: [
+      { x: 60, y: 0, len: 45 }, { x: 160, y: 0, len: 30 }, { x: 280, y: 0, len: 55 },
+      { x: 380, y: 0, len: 38 }, { x: 480, y: 0, len: 62 }, { x: 580, y: 0, len: 42 },
+      { x: 700, y: 0, len: 50 }, { x: 760, y: 0, len: 35 },
+    ],
+    pipe: { x: 700 },
+  },
 ];
 
 // ─── DRAW HELPERS ────────────────────────────────────────────────────────
@@ -836,6 +873,30 @@ function drawFirefly(ctx, x, y, frame) {
   ctx.restore();
 }
 
+function drawCrystal(ctx, x, y, frame) {
+  const pulse = 0.55 + Math.sin(frame * 0.07 + x * 0.3) * 0.45;
+  const colors = ["#7B2FFF", "#00FFCC", "#FF44AA", "#44AAFF"];
+  const col = colors[Math.floor(x * 0.013 + y * 0.007) % colors.length];
+  ctx.save();
+  ctx.globalAlpha = pulse;
+  ctx.shadowColor = col; ctx.shadowBlur = 18;
+  ctx.fillStyle = col;
+  ctx.beginPath();
+  ctx.moveTo(x, y - 16); ctx.lineTo(x + 5, y); ctx.lineTo(x + 3, y + 8);
+  ctx.lineTo(x - 3, y + 8); ctx.lineTo(x - 5, y); ctx.closePath(); ctx.fill();
+  ctx.globalAlpha = pulse * 0.5; ctx.fillStyle = "#ffffff";
+  ctx.beginPath(); ctx.moveTo(x, y - 12); ctx.lineTo(x + 2, y - 4); ctx.lineTo(x - 2, y - 4); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function drawStalactite(ctx, x, y, len) {
+  ctx.save();
+  ctx.fillStyle = "#3a2a1a";
+  ctx.beginPath(); ctx.moveTo(x - 5, y); ctx.lineTo(x + 5, y); ctx.lineTo(x, y + len); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  ctx.beginPath(); ctx.moveTo(x - 2, y); ctx.lineTo(x + 1, y); ctx.lineTo(x, y + len * 0.6); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
 function drawTree(ctx, x, y, size, variant) {
   const s = size || 1;
   // trunk
@@ -995,6 +1056,7 @@ export default function MarioGame() {
     brokenBlocks: [], fallingItems: [],
     touchLeft: false, touchRight: false, touchJump: false, touchDown: false, musicOn: true,
     pipeEnterTimer: 0,
+    fadeInTimer: 0,
   });
   const [ui, setUi] = useState({ score: 0, lives: 3, level: 0, gameState: "menu", levelName: "", musicOn: true });
   const [inFullscreen, setInFullscreen] = useState(false);
@@ -1061,6 +1123,7 @@ export default function MarioGame() {
 
     const loop = () => {
       const g = gs.current; g.frame++;
+      if (g.fadeInTimer > 0) g.fadeInTimer--;
       const lv = LEVELS[g.level] || LEVELS[0];
 
       // Block A – movement physics: runs in playing AND levelComplete
@@ -1286,8 +1349,10 @@ export default function MarioGame() {
         g.player.vx = 0;
         if (g.pipeEnterTimer >= 50) {
           music.playSFX("levelup");
-          if (g.level + 1 < LEVELS.length) resetLevel(g.level + 1);
-          else { g.gameState = "gameComplete"; setUi(prev => ({ ...prev, gameState: "gameComplete" })); }
+          if (g.level + 1 < LEVELS.length) {
+            resetLevel(g.level + 1);
+            g.fadeInTimer = 50; // 20 frames black hold + 30 frames fade-in
+          } else { g.gameState = "gameComplete"; setUi(prev => ({ ...prev, gameState: "gameComplete" })); }
         }
       }
 
@@ -1302,8 +1367,10 @@ export default function MarioGame() {
       if (lv.clouds) lv.clouds.forEach(c => drawCloud(ctx, (c.x + g.frame * 0.2) % (GW + 100) - 50, c.y, c.size));
       if (lv.fireflies) lv.fireflies.forEach(ff => drawFirefly(ctx, ff.x + Math.sin(g.frame * 0.02 + ff.x) * 20, ff.y + Math.cos(g.frame * 0.03 + ff.y) * 15, g.frame));
       if (lv.trees) lv.trees.forEach(t => drawTree(ctx, t.x, t.y, t.size, t.variant));
+      if (lv.stalactites) lv.stalactites.forEach(s => drawStalactite(ctx, s.x, s.y, s.len));
+      if (lv.crystals) lv.crystals.forEach(c => drawCrystal(ctx, c.x, c.y, g.frame));
 
-      if (lv.platforms[0]) {
+      if (lv.platforms[0] && !lv.stalactites) {
         ctx.fillStyle = "#2d8c1f";
         for (let gx = 0; gx < GW; gx += 20) { const gh = 5 + Math.sin(gx * 0.3) * 3; ctx.beginPath(); ctx.moveTo(gx, lv.platforms[0].y); ctx.lineTo(gx + 5, lv.platforms[0].y - gh); ctx.lineTo(gx + 10, lv.platforms[0].y); ctx.fill(); }
       }
@@ -1490,6 +1557,19 @@ export default function MarioGame() {
         ctx.fillStyle = "#FF7043"; ctx.beginPath(); ctx.roundRect(GW / 2 - 100, 345, 200, 44, 22); ctx.fill();
         ctx.fillStyle = "#FFF"; ctx.font = "bold 18px 'Segoe UI', sans-serif";
         ctx.fillText("Hrát znovu \uD83D\uDD04", GW / 2, 373);
+      }
+
+      // Pipe enter: darken as player descends (frames 0-29 alpha 0→1, holds black 30-49)
+      if (g.gameState === "enteringPipe") {
+        const alpha = Math.min(1, g.pipeEnterTimer / 30);
+        ctx.fillStyle = `rgba(0,0,0,${alpha})`;
+        ctx.fillRect(0, 0, GW, GH);
+      }
+      // New level fade-in: opaque for first 20 frames, fades out over 30 frames
+      if (g.fadeInTimer > 0) {
+        const alpha = g.fadeInTimer > 30 ? 1 : g.fadeInTimer / 30;
+        ctx.fillStyle = `rgba(0,0,0,${alpha})`;
+        ctx.fillRect(0, 0, GW, GH);
       }
 
       animRef.current = requestAnimationFrame(loop);
