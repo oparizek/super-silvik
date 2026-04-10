@@ -338,40 +338,6 @@ function drawEnemy(ctx, enemy) {
   ctx.restore();
 }
 
-function drawFireChain(ctx, cx, cy, radius, numSegments, angle, frame) {
-  const spacing = radius / numSegments;
-  const R = 10;
-
-  // Pivot stone anchor
-  ctx.save();
-  ctx.fillStyle = "#555"; ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = "#888"; ctx.beginPath(); ctx.arc(cx, cy, 5, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-
-  for (const dir of [1, -1]) {
-    // Chain backbone line
-    ctx.save();
-    ctx.strokeStyle = "#333"; ctx.lineWidth = 3;
-    ctx.beginPath(); ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + Math.cos(angle) * radius * dir, cy + Math.sin(angle) * radius * dir);
-    ctx.stroke();
-    ctx.restore();
-
-    for (let s = 1; s <= numSegments; s++) {
-      const sx = cx + Math.cos(angle) * spacing * s * dir;
-      const sy = cy + Math.sin(angle) * spacing * s * dir;
-      const flicker = 0.85 + Math.sin(frame * 0.3 + s * 1.3) * 0.15;
-      ctx.save();
-      ctx.shadowColor = "#FF4400"; ctx.shadowBlur = 18 * flicker;
-      ctx.fillStyle = `hsl(${15 + s * 4}, 100%, 50%)`;
-      ctx.beginPath(); ctx.arc(sx, sy, R * flicker, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#FFE040";
-      ctx.beginPath(); ctx.arc(sx, sy, R * 0.45 * flicker, 0, Math.PI * 2); ctx.fill();
-      ctx.restore();
-    }
-  }
-}
-
 // ─── LEVELS ──────────────────────────────────────────────────────────────
 const LEVELS = [
   {
@@ -387,7 +353,7 @@ const LEVELS = [
       { x: 650, y: 350, w: 100, h: 20, color: "#8B4513", breakable: true, drop: "shrinkMushroom" },
       { x: 300, y: 200, w: 100, h: 20, color: "#4a7c3f", breakable: true, drop: "greenMushroom" },
     ],
-    stars: [{ x: 190, y: 310 }, { x: 280, y: 250 }, { x: 590, y: 180 }, { x: 240, y: 130 }, { x: 480, y: 90 }, { x: 690, y: 310 }, { x: 100, y: 400 }, { x: 500, y: 400 }],
+    stars: [{ x: 190, y: 310 }, { x: 390, y: 250 }, { x: 590, y: 180 }, { x: 240, y: 130 }, { x: 480, y: 90 }, { x: 690, y: 310 }, { x: 100, y: 400 }, { x: 500, y: 400 }],
     eyeExercise: "tracking",
     movingStars: [
       { x: 100, y: 200, dx: 2, dy: 0, minX: 50, maxX: 300, minY: 200, maxY: 200 },
@@ -396,9 +362,6 @@ const LEVELS = [
     clouds: [{ x: 100, y: 50, size: 1 }, { x: 350, y: 30, size: 1.3 }, { x: 600, y: 60, size: 0.9 }],
     mushrooms: [{ x: 210, y: 333 }],
     flowers: [{ x: 200, y: 150 }],
-    fireChains: [
-      { cx: 410, cy: 290, radius: 70, speed: 0.025, segments: 5, initialAngle: 0 },
-    ],
     pipe: { x: 690 },
   },
   {
@@ -415,7 +378,7 @@ const LEVELS = [
       { x: 70, y: 150, w: 140, h: 20, color: "#5c3d2e" },
       { x: 450, y: 180, w: 100, h: 20, color: "#3d5c2e", breakable: true, drop: "greenMushroom" },
     ],
-    stars: [{ x: 80, y: 310 }, { x: 250, y: 260 }, { x: 430, y: 310 }, { x: 340, y: 160 }, { x: 480, y: 220 }, { x: 720, y: 140 }, { x: 130, y: 110 }, { x: 300, y: 400 }, { x: 650, y: 400 }],
+    stars: [{ x: 80, y: 310 }, { x: 250, y: 260 }, { x: 430, y: 310 }, { x: 340, y: 160 }, { x: 580, y: 220 }, { x: 720, y: 140 }, { x: 130, y: 110 }, { x: 300, y: 400 }, { x: 650, y: 400 }],
     eyeExercise: "saccade",
     movingStars: [
       { x: 700, y: 100, dx: -3, dy: 0, minX: 50, maxX: 750, minY: 100, maxY: 100 },
@@ -424,9 +387,6 @@ const LEVELS = [
     fireflies: [{ x: 150, y: 100 }, { x: 300, y: 80 }, { x: 500, y: 120 }, { x: 650, y: 90 }, { x: 400, y: 200 }, { x: 100, y: 250 }],
     mushrooms: [{ x: 270, y: 283 }],
     flowers: [{ x: 75, y: 130 }],
-    fireChains: [
-      { cx: 590, cy: 260, radius: 70, speed: 0.028, segments: 5, initialAngle: 1.0 },
-    ],
     pipe: { x: 680 },
   },
   {
@@ -445,19 +405,15 @@ const LEVELS = [
       { x: 610, y: 150, w: 140, h: 20, color: "#FFD700" },
       { x: 520, y: 300, w: 100, h: 20, color: "#66BB6A", breakable: true, drop: "greenMushroom" },
     ],
-    stars: [{ x: 120, y: 320 }, { x: 270, y: 260 }, { x: 300, y: 200 }, { x: 570, y: 260 }, { x: 770, y: 200 }, { x: 320, y: 120 }, { x: 520, y: 80 }, { x: 170, y: 160 }, { x: 680, y: 110 }, { x: 400, y: 400 }],
+    stars: [{ x: 120, y: 320 }, { x: 270, y: 260 }, { x: 420, y: 200 }, { x: 570, y: 260 }, { x: 700, y: 200 }, { x: 320, y: 120 }, { x: 520, y: 80 }, { x: 170, y: 160 }, { x: 680, y: 110 }, { x: 400, y: 400 }],
     eyeExercise: "convergence",
     movingStars: [
-      { x: 50, y: 80, dx: 1.5, dy: 1, minX: 50, maxX: 750, minY: 60, maxY: 150 },
-      { x: 750, y: 150, dx: -1.5, dy: -1, minX: 50, maxX: 750, minY: 60, maxY: 150 },
-      { x: 250, y: 300, dx: 2, dy: 0, minX: 50, maxX: 380, minY: 300, maxY: 300 },
+      { x: 50, y: 80, dx: 1.5, dy: 1, minX: 50, maxX: 750, minY: 60, maxY: 180 },
+      { x: 750, y: 180, dx: -1.5, dy: -1, minX: 50, maxX: 750, minY: 60, maxY: 180 },
+      { x: 400, y: 300, dx: 2, dy: 0, minX: 200, maxX: 600, minY: 300, maxY: 300 },
     ],
     mushrooms: [{ x: 445, y: 223 }],
     flowers: [{ x: 125, y: 180 }],
-    fireChains: [
-      { cx: 445, cy: 240, radius: 70, speed: 0.03, segments: 5, initialAngle: 0 },
-      { cx: 695, cy: 240, radius: 65, speed: -0.025, segments: 4, initialAngle: 2.1 },
-    ],
     pipe: { x: 680 },
   },
   {
@@ -476,14 +432,14 @@ const LEVELS = [
       { x: 80, y: 260, w: 90, h: 20, color: "#3d5c2e", breakable: true, drop: "greenMushroom" },
     ],
     stars: [
-      { x: 120, y: 320 }, { x: 280, y: 270 }, { x: 360, y: 220 }, { x: 630, y: 280 },
+      { x: 120, y: 320 }, { x: 280, y: 270 }, { x: 460, y: 220 }, { x: 630, y: 280 },
       { x: 190, y: 170 }, { x: 390, y: 120 }, { x: 590, y: 150 }, { x: 730, y: 100 },
       { x: 400, y: 400 }, { x: 150, y: 400 },
     ],
     eyeExercise: "tracking",
     movingStars: [
       { x: 100, y: 120, dx: 2, dy: 0.8, minX: 50, maxX: 400, minY: 80, maxY: 200 },
-      { x: 600, y: 100, dx: -1.5, dy: 1, minX: 400, maxX: 750, minY: 80, maxY: 150 },
+      { x: 600, y: 100, dx: -1.5, dy: 1, minX: 400, maxX: 750, minY: 80, maxY: 200 },
     ],
     trees: [
       { x: 40, y: 420, size: 1.3, variant: 0 },
@@ -509,9 +465,6 @@ const LEVELS = [
     ],
     mushrooms: [{ x: 135, y: 343 }],
     flowers: [{ x: 705, y: 120 }],
-    fireChains: [
-      { cx: 475, cy: 260, radius: 70, speed: 0.032, segments: 5, initialAngle: 0.5 },
-    ],
     pipe: { x: 700 },
   },
 ];
@@ -1041,7 +994,7 @@ export default function MarioGame() {
     petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, starPowerTimer: 0, hulkTimer: 0, gameState: "menu",
     brokenBlocks: [], fallingItems: [],
     touchLeft: false, touchRight: false, touchJump: false, touchDown: false, musicOn: true,
-    pipeEnterTimer: 0, fireChainAngles: [],
+    pipeEnterTimer: 0,
   });
   const [ui, setUi] = useState({ score: 0, lives: 3, level: 0, gameState: "menu", levelName: "", musicOn: true });
   const [inFullscreen, setInFullscreen] = useState(false);
@@ -1063,7 +1016,6 @@ export default function MarioGame() {
     g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.collectedFlowers = []; g.particles = [];
     g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.starPowerTimer = 0; g.hulkTimer = 0;
     g.brokenBlocks = []; g.fallingItems = []; g.gameState = "playing"; g.pipeEnterTimer = 0;
-    g.fireChainAngles = (LEVELS[li].fireChains || []).map(fc => fc.initialAngle || 0);
     music.setMode("normal");
     const lvDogs = LEVELS[li].dogs || [];
     g.dogs = lvDogs.map(d => ({ ...d, dir: 1, frame: Math.random() * 100, happy: false, happyTimer: 0 }));
@@ -1233,27 +1185,6 @@ export default function MarioGame() {
             }
           }
         });
-
-        // Fire chains – update angles and check collision
-        let chainHit = false;
-        (lv.fireChains || []).forEach((fc, i) => {
-          g.fireChainAngles[i] = (g.fireChainAngles[i] || 0) + fc.speed;
-          if (chainHit) return;
-          const angle = g.fireChainAngles[i];
-          const spacing = fc.radius / fc.segments;
-          const R = 10;
-          outer: for (const dir of [1, -1]) {
-            for (let s = 1; s <= fc.segments; s++) {
-              const sx = fc.cx + Math.cos(angle) * spacing * s * dir;
-              const sy = fc.cy + Math.sin(angle) * spacing * s * dir;
-              const clx = Math.max(p.x, Math.min(sx, p.x + PW));
-              const cly = Math.max(p.y, Math.min(sy, p.y + PH));
-              const ddx = sx - clx, ddy = sy - cly;
-              if (ddx * ddx + ddy * ddy < R * R) { chainHit = true; break outer; }
-            }
-          }
-        });
-        if (chainHit && g.hulkTimer <= 0 && g.captainAmericaTimer <= 0) { music.playSFX("hurt"); resetLevel(g.level); }
 
         // Stars
         lv.stars.forEach((star, i) => {
@@ -1432,11 +1363,6 @@ export default function MarioGame() {
         drawPipeIndicator(ctx, lv.pipe.x, pipeActive, g.frame);
         drawPipe(ctx, lv.pipe.x, pipeActive, g.frame);
       }
-
-      // Fire chains
-      (lv.fireChains || []).forEach((fc, i) => {
-        drawFireChain(ctx, fc.cx, fc.cy, fc.radius, fc.segments, g.fireChainAngles[i] || 0, g.frame);
-      });
 
       // Falling items from broken blocks
       g.fallingItems.forEach(item => {
