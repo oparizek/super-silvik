@@ -387,7 +387,7 @@ const LEVELS = [
       { x: 650, y: 350, w: 100, h: 20, color: "#8B4513", breakable: true, drop: "shrinkMushroom" },
       { x: 300, y: 200, w: 100, h: 20, color: "#4a7c3f", breakable: true, drop: "greenMushroom" },
     ],
-    stars: [{ x: 190, y: 310 }, { x: 390, y: 250 }, { x: 590, y: 180 }, { x: 240, y: 130 }, { x: 480, y: 90 }, { x: 690, y: 310 }, { x: 100, y: 400 }, { x: 500, y: 400 }],
+    stars: [{ x: 190, y: 310 }, { x: 280, y: 250 }, { x: 590, y: 180 }, { x: 240, y: 130 }, { x: 480, y: 90 }, { x: 690, y: 310 }, { x: 100, y: 400 }, { x: 500, y: 400 }],
     eyeExercise: "tracking",
     movingStars: [
       { x: 100, y: 200, dx: 2, dy: 0, minX: 50, maxX: 300, minY: 200, maxY: 200 },
@@ -415,7 +415,7 @@ const LEVELS = [
       { x: 70, y: 150, w: 140, h: 20, color: "#5c3d2e" },
       { x: 450, y: 180, w: 100, h: 20, color: "#3d5c2e", breakable: true, drop: "greenMushroom" },
     ],
-    stars: [{ x: 80, y: 310 }, { x: 250, y: 260 }, { x: 430, y: 310 }, { x: 340, y: 160 }, { x: 580, y: 220 }, { x: 720, y: 140 }, { x: 130, y: 110 }, { x: 300, y: 400 }, { x: 650, y: 400 }],
+    stars: [{ x: 80, y: 310 }, { x: 250, y: 260 }, { x: 430, y: 310 }, { x: 340, y: 160 }, { x: 480, y: 220 }, { x: 720, y: 140 }, { x: 130, y: 110 }, { x: 300, y: 400 }, { x: 650, y: 400 }],
     eyeExercise: "saccade",
     movingStars: [
       { x: 700, y: 100, dx: -3, dy: 0, minX: 50, maxX: 750, minY: 100, maxY: 100 },
@@ -445,12 +445,12 @@ const LEVELS = [
       { x: 610, y: 150, w: 140, h: 20, color: "#FFD700" },
       { x: 520, y: 300, w: 100, h: 20, color: "#66BB6A", breakable: true, drop: "greenMushroom" },
     ],
-    stars: [{ x: 120, y: 320 }, { x: 270, y: 260 }, { x: 420, y: 200 }, { x: 570, y: 260 }, { x: 700, y: 200 }, { x: 320, y: 120 }, { x: 520, y: 80 }, { x: 170, y: 160 }, { x: 680, y: 110 }, { x: 400, y: 400 }],
+    stars: [{ x: 120, y: 320 }, { x: 270, y: 260 }, { x: 300, y: 200 }, { x: 570, y: 260 }, { x: 770, y: 200 }, { x: 320, y: 120 }, { x: 520, y: 80 }, { x: 170, y: 160 }, { x: 680, y: 110 }, { x: 400, y: 400 }],
     eyeExercise: "convergence",
     movingStars: [
-      { x: 50, y: 80, dx: 1.5, dy: 1, minX: 50, maxX: 750, minY: 60, maxY: 180 },
-      { x: 750, y: 180, dx: -1.5, dy: -1, minX: 50, maxX: 750, minY: 60, maxY: 180 },
-      { x: 400, y: 300, dx: 2, dy: 0, minX: 200, maxX: 600, minY: 300, maxY: 300 },
+      { x: 50, y: 80, dx: 1.5, dy: 1, minX: 50, maxX: 750, minY: 60, maxY: 150 },
+      { x: 750, y: 150, dx: -1.5, dy: -1, minX: 50, maxX: 750, minY: 60, maxY: 150 },
+      { x: 250, y: 300, dx: 2, dy: 0, minX: 50, maxX: 380, minY: 300, maxY: 300 },
     ],
     mushrooms: [{ x: 445, y: 223 }],
     flowers: [{ x: 125, y: 180 }],
@@ -476,14 +476,14 @@ const LEVELS = [
       { x: 80, y: 260, w: 90, h: 20, color: "#3d5c2e", breakable: true, drop: "greenMushroom" },
     ],
     stars: [
-      { x: 120, y: 320 }, { x: 280, y: 270 }, { x: 460, y: 220 }, { x: 630, y: 280 },
+      { x: 120, y: 320 }, { x: 280, y: 270 }, { x: 360, y: 220 }, { x: 630, y: 280 },
       { x: 190, y: 170 }, { x: 390, y: 120 }, { x: 590, y: 150 }, { x: 730, y: 100 },
       { x: 400, y: 400 }, { x: 150, y: 400 },
     ],
     eyeExercise: "tracking",
     movingStars: [
       { x: 100, y: 120, dx: 2, dy: 0.8, minX: 50, maxX: 400, minY: 80, maxY: 200 },
-      { x: 600, y: 100, dx: -1.5, dy: 1, minX: 400, maxX: 750, minY: 80, maxY: 200 },
+      { x: 600, y: 100, dx: -1.5, dy: 1, minX: 400, maxX: 750, minY: 80, maxY: 150 },
     ],
     trees: [
       { x: 40, y: 420, size: 1.3, variant: 0 },
@@ -1253,7 +1253,7 @@ export default function MarioGame() {
             }
           }
         });
-        if (chainHit) { music.playSFX("hurt"); resetLevel(g.level); }
+        if (chainHit && g.hulkTimer <= 0 && g.captainAmericaTimer <= 0) { music.playSFX("hurt"); resetLevel(g.level); }
 
         // Stars
         lv.stars.forEach((star, i) => {
