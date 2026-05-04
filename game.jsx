@@ -636,28 +636,35 @@ function drawFlower(ctx, x, y, frame) {
 function drawCoin(ctx, x, y, frame) {
   const bob = Math.sin(frame * 0.07 + x * 0.01) * 3;
   const cy = y + bob;
-  const r = 11;
+  const r = 12;
   const pulse = 0.92 + Math.sin(frame * 0.1 + x * 0.02) * 0.08;
   ctx.save();
   ctx.translate(x, cy);
   ctx.scale(pulse, pulse);
-  ctx.shadowColor = "rgba(220, 200, 255, 0.9)";
-  ctx.shadowBlur = 14;
-  // Crescent moon: outer circle minus offset inner circle (evenodd rule)
-  const grad = ctx.createRadialGradient(-3, -3, 1, 0, 0, r);
+  ctx.shadowColor = "rgba(255, 200, 0, 0.9)";
+  ctx.shadowBlur = 16;
+  // Golden crescent: outer circle minus offset inner circle (evenodd rule)
+  const grad = ctx.createRadialGradient(-4, -4, 1, 0, 0, r);
   grad.addColorStop(0, "#FFFDE7");
-  grad.addColorStop(0.4, "#E0C8FF");
-  grad.addColorStop(1, "#9C27B0");
+  grad.addColorStop(0.35, "#FFD700");
+  grad.addColorStop(1, "#E65100");
   ctx.fillStyle = grad;
   ctx.beginPath();
   ctx.arc(0, 0, r, 0, Math.PI * 2, false);
-  ctx.arc(5, -3, 8, 0, Math.PI * 2, true);
+  ctx.arc(5, -3, 9, 0, Math.PI * 2, true);
   ctx.fill("evenodd");
-  // Shine highlight
+  // Golden outline
   ctx.shadowBlur = 0;
-  ctx.fillStyle = "rgba(255,255,255,0.55)";
+  ctx.strokeStyle = "#FF8F00";
+  ctx.lineWidth = 0.8;
   ctx.beginPath();
-  ctx.arc(-4, -4, 2.5, 0, Math.PI * 2);
+  ctx.arc(0, 0, r, 0, Math.PI * 2, false);
+  ctx.arc(5, -3, 9, 0, Math.PI * 2, true);
+  ctx.stroke();
+  // Shine highlight
+  ctx.fillStyle = "rgba(255,255,255,0.65)";
+  ctx.beginPath();
+  ctx.arc(-5, -5, 2.5, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
@@ -1420,7 +1427,7 @@ export default function MarioGame() {
             g.coinMuscle = Math.min(10, g.coinMuscle + 1);
             g.score += 5;
             music.playSFX("coin");
-            for (let j = 0; j < 14; j++) g.particles.push({ x: coin.x, y: coin.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 1.2) * 5, life: 40, maxLife: 40, color: ["#E0C8FF", "#9C27B0", "#CE93D8", "#FFFDE7", "#FFD700"][j % 5] });
+            for (let j = 0; j < 14; j++) g.particles.push({ x: coin.x, y: coin.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 1.2) * 5, life: 40, maxLife: 40, color: ["#FFD700", "#FFFDE7", "#FF8F00", "#FFEB3B", "#FFF9C4"][j % 5] });
             setUi(prev => ({ ...prev, score: g.score }));
           }
         });
@@ -1596,7 +1603,7 @@ export default function MarioGame() {
         const coinTotal = lv.coins ? lv.coins.length : 0;
         ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.beginPath(); ctx.roundRect(10, 58, 160, 34, 10); ctx.fill();
         ctx.font = "bold 19px 'Segoe UI', sans-serif";
-        ctx.fillStyle = g.coinMuscle >= 10 ? "#FFD700" : "#CE93D8";
+        ctx.fillStyle = g.coinMuscle >= 10 ? "#FFFDE7" : "#FFD700";
         ctx.fillText("\uD83C\uDF19 " + g.collectedCoins.length + " / " + coinTotal, 22, 82);
       }
 
