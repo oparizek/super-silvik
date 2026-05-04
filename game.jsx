@@ -200,6 +200,14 @@ class RetroMusic {
       o.frequency.exponentialRampToValueAtTime(80, now + 0.5);
       g.gain.setValueAtTime(0.12, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
       o.connect(g); g.connect(this.ctx.destination); o.start(now); o.stop(now + 0.55);
+    } else if (type === "coin") {
+      // Moon coin: two quick high sine notes (ding-ding)
+      [[1047, 0], [1319, 0.07]].forEach(([f, t]) => {
+        const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+        o.type = "sine"; o.frequency.setValueAtTime(f, now + t);
+        g.gain.setValueAtTime(0.14, now + t); g.gain.exponentialRampToValueAtTime(0.001, now + t + 0.1);
+        o.connect(g); g.connect(this.ctx.destination); o.start(now + t); o.stop(now + t + 0.12);
+      });
     }
   }
 
@@ -362,6 +370,12 @@ const LEVELS = [
     clouds: [{ x: 100, y: 50, size: 1 }, { x: 350, y: 30, size: 1.3 }, { x: 600, y: 60, size: 0.9 }],
     mushrooms: [{ x: 210, y: 333 }],
     flowers: [{ x: 200, y: 150 }],
+    coins: [
+      { x: 60, y: 410 }, { x: 190, y: 322 }, { x: 270, y: 410 },
+      { x: 390, y: 262 }, { x: 470, y: 410 }, { x: 590, y: 192 },
+      { x: 240, y: 142 }, { x: 680, y: 322 }, { x: 490, y: 102 },
+      { x: 350, y: 410 },
+    ],
     pipe: { x: 690 },
   },
   {
@@ -387,6 +401,12 @@ const LEVELS = [
     fireflies: [{ x: 150, y: 100 }, { x: 300, y: 80 }, { x: 500, y: 120 }, { x: 650, y: 90 }, { x: 400, y: 200 }, { x: 100, y: 250 }],
     mushrooms: [{ x: 270, y: 283 }],
     flowers: [{ x: 75, y: 130 }],
+    coins: [
+      { x: 60, y: 322 }, { x: 235, y: 272 }, { x: 140, y: 410 },
+      { x: 415, y: 322 }, { x: 315, y: 172 }, { x: 565, y: 232 },
+      { x: 675, y: 152 }, { x: 115, y: 122 }, { x: 495, y: 152 },
+      { x: 550, y: 410 },
+    ],
     pipe: { x: 680 },
   },
   {
@@ -414,6 +434,12 @@ const LEVELS = [
     ],
     mushrooms: [{ x: 445, y: 223 }],
     flowers: [{ x: 125, y: 180 }],
+    coins: [
+      { x: 115, y: 332 }, { x: 270, y: 272 }, { x: 420, y: 212 },
+      { x: 570, y: 272 }, { x: 690, y: 212 }, { x: 325, y: 132 },
+      { x: 520, y: 92 }, { x: 170, y: 172 }, { x: 665, y: 122 },
+      { x: 400, y: 410 },
+    ],
     pipe: { x: 680 },
   },
   {
@@ -465,6 +491,12 @@ const LEVELS = [
     ],
     mushrooms: [{ x: 135, y: 343 }],
     flowers: [{ x: 705, y: 120 }],
+    coins: [
+      { x: 115, y: 332 }, { x: 285, y: 282 }, { x: 460, y: 232 },
+      { x: 640, y: 292 }, { x: 200, y: 182 }, { x: 400, y: 132 },
+      { x: 605, y: 162 }, { x: 740, y: 112 }, { x: 115, y: 232 },
+      { x: 380, y: 410 },
+    ],
     pipe: { x: 700 },
   },
   {
@@ -501,6 +533,12 @@ const LEVELS = [
       { x: 60, y: 0, len: 45 }, { x: 160, y: 0, len: 30 }, { x: 280, y: 0, len: 55 },
       { x: 380, y: 0, len: 38 }, { x: 480, y: 0, len: 62 }, { x: 580, y: 0, len: 42 },
       { x: 700, y: 0, len: 50 }, { x: 760, y: 0, len: 35 },
+    ],
+    coins: [
+      { x: 115, y: 342 }, { x: 285, y: 282 }, { x: 460, y: 232 },
+      { x: 640, y: 292 }, { x: 200, y: 182 }, { x: 400, y: 132 },
+      { x: 605, y: 157 }, { x: 740, y: 112 }, { x: 115, y: 232 },
+      { x: 380, y: 410 },
     ],
     pipe: { x: 700 },
   },
@@ -592,6 +630,35 @@ function drawFlower(ctx, x, y, frame) {
   ctx.shadowBlur = 0;
   ctx.fillStyle = "#FFD700"; ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = "#FF8F00"; ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function drawCoin(ctx, x, y, frame) {
+  const bob = Math.sin(frame * 0.07 + x * 0.01) * 3;
+  const cy = y + bob;
+  const r = 11;
+  const pulse = 0.92 + Math.sin(frame * 0.1 + x * 0.02) * 0.08;
+  ctx.save();
+  ctx.translate(x, cy);
+  ctx.scale(pulse, pulse);
+  ctx.shadowColor = "rgba(220, 200, 255, 0.9)";
+  ctx.shadowBlur = 14;
+  // Crescent moon: outer circle minus offset inner circle (evenodd rule)
+  const grad = ctx.createRadialGradient(-3, -3, 1, 0, 0, r);
+  grad.addColorStop(0, "#FFFDE7");
+  grad.addColorStop(0.4, "#E0C8FF");
+  grad.addColorStop(1, "#9C27B0");
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(0, 0, r, 0, Math.PI * 2, false);
+  ctx.arc(5, -3, 8, 0, Math.PI * 2, true);
+  ctx.fill("evenodd");
+  // Shine highlight
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = "rgba(255,255,255,0.55)";
+  ctx.beginPath();
+  ctx.arc(-4, -4, 2.5, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
 }
 
@@ -756,7 +823,7 @@ function drawHulkPlayer(ctx, x, y, facingRight, frame, invincible) {
   ctx.restore();
 }
 
-function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false, captainAmericaPower = false, starPower = false, hulkPower = false) {
+function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false, captainAmericaPower = false, starPower = false, hulkPower = false, coinMuscle = 0) {
   if (hulkPower) {
     const pcx = x + PW / 2, pcy = y + PH / 2;
     ctx.save(); ctx.translate(pcx, pcy); ctx.scale(2.0, 2.0); ctx.translate(-pcx, -pcy);
@@ -772,14 +839,18 @@ function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = f
     return;
   }
   ctx.save();
+  const muscleScale = 1 + coinMuscle * 0.1;
   if (mushroomPower) {
     const pcx = x + PW / 2, pcy = y + PH / 2;
-    ctx.translate(pcx, pcy); ctx.scale(1.5, 1.5); ctx.translate(-pcx, -pcy);
+    ctx.translate(pcx, pcy); ctx.scale(1.5 * muscleScale, 1.5 * muscleScale); ctx.translate(-pcx, -pcy);
     if (Math.floor(frame / 6) % 2 === 0) ctx.globalAlpha = 0.65;
   } else if (shrinkPower) {
     const pcx = x + PW / 2, pcy = y + PH / 2;
-    ctx.translate(pcx, pcy); ctx.scale(0.65, 0.65); ctx.translate(-pcx, -pcy);
+    ctx.translate(pcx, pcy); ctx.scale(0.65 * muscleScale, 0.65 * muscleScale); ctx.translate(-pcx, -pcy);
     if (Math.floor(frame / 6) % 2 === 0) ctx.globalAlpha = 0.65;
+  } else if (coinMuscle > 0) {
+    const pcx = x + PW / 2, pcy = y + PH / 2;
+    ctx.translate(pcx, pcy); ctx.scale(muscleScale, muscleScale); ctx.translate(-pcx, -pcy);
   }
   const f = facingRight ? 1 : -1;
   const cx = x + PW / 2;
@@ -795,13 +866,29 @@ function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = f
   ctx.fillStyle = "#1565C0";
   ctx.fillRect(cx - 7 * f - 3, y + 28 + bob, 7, 12);
   ctx.fillRect(cx + 2 * f - 1, y + 28 + bob, 7, 12);
+  // Torso — slightly wider with muscle growth
+  const torsoExtra = Math.floor(coinMuscle * 0.5);
   ctx.fillStyle = "#43A047";
-  ctx.beginPath(); ctx.roundRect(cx - 10, y + 14 + bob, 20, 16, 3); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(cx - 10 - torsoExtra, y + 14 + bob, 20 + torsoExtra * 2, 16, 3); ctx.fill();
+  // Muscle chest highlights at coinMuscle >= 5
+  if (coinMuscle >= 5) {
+    ctx.fillStyle = "#66BB6A";
+    ctx.beginPath(); ctx.roundRect(cx - 9 - torsoExtra, y + 15 + bob, 7 + torsoExtra, 6, 2); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(cx + 2, y + 15 + bob, 7 + torsoExtra, 6, 2); ctx.fill();
+  }
   ctx.fillStyle = "#FFD700"; ctx.font = "9px sans-serif"; ctx.textAlign = "center"; ctx.fillText("★", cx, y + 26 + bob);
-  ctx.fillStyle = "#FFCC80";
+  // Arms — wider with coinMuscle (extra px on outer side)
+  const armExtra = Math.floor(coinMuscle * 0.6);
   const arm = Math.sin(frame * 0.2) * 8;
-  ctx.fillRect(cx - 14, y + 16 + bob + arm * 0.3, 5, 10);
-  ctx.fillRect(cx + 9, y + 16 + bob - arm * 0.3, 5, 10);
+  ctx.fillStyle = "#FFCC80";
+  ctx.fillRect(cx - 14 - armExtra, y + 16 + bob + arm * 0.3, 5 + armExtra, 10);
+  ctx.fillRect(cx + 9, y + 16 + bob - arm * 0.3, 5 + armExtra, 10);
+  // Bicep bulge at coinMuscle >= 4
+  if (coinMuscle >= 4) {
+    const bicep = 2 + coinMuscle * 0.35;
+    ctx.beginPath(); ctx.arc(cx - 14 - armExtra / 2, y + 21 + bob + arm * 0.15, bicep, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 9 + (5 + armExtra) / 2, y + 21 + bob - arm * 0.15, bicep, 0, Math.PI * 2); ctx.fill();
+  }
   ctx.fillStyle = "#FFCC80";
   ctx.beginPath(); ctx.arc(cx, y + 10 + bob, 11, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = "#5D4037";
@@ -824,6 +911,12 @@ function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = f
   ctx.beginPath(); ctx.arc(cx + 5.5 + f * 0.5, y + 10 + bob, 0.8, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = "#C62828"; ctx.lineWidth = 1;
   ctx.beginPath(); ctx.arc(cx, y + 14 + bob, 3, 0.1, Math.PI - 0.1); ctx.stroke();
+  // Muscle vein lines on torso at coinMuscle >= 8
+  if (coinMuscle >= 8) {
+    ctx.strokeStyle = "rgba(30,80,20,0.45)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx - 2, y + 15 + bob); ctx.lineTo(cx - 2, y + 29 + bob); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + 2, y + 15 + bob); ctx.lineTo(cx + 2, y + 29 + bob); ctx.stroke();
+  }
   if (starPower) {
     ctx.save();
     ctx.globalAlpha = 0.35 + Math.sin(frame * 0.25) * 0.2;
@@ -1051,8 +1144,8 @@ export default function MarioGame() {
   const gs = useRef({
     player: { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true },
     keys: {}, frame: 0, score: 0, lives: 3, level: 0,
-    collectedStars: [], collectedMoving: [], collectedMushrooms: [], collectedFlowers: [], particles: [], enemies: [], dogs: [],
-    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, starPowerTimer: 0, hulkTimer: 0, gameState: "menu",
+    collectedStars: [], collectedMoving: [], collectedMushrooms: [], collectedFlowers: [], collectedCoins: [], particles: [], enemies: [], dogs: [],
+    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, starPowerTimer: 0, hulkTimer: 0, coinMuscle: 0, gameState: "menu",
     brokenBlocks: [], fallingItems: [],
     touchLeft: false, touchRight: false, touchJump: false, touchDown: false, musicOn: true,
     pipeEnterTimer: 0,
@@ -1075,7 +1168,7 @@ export default function MarioGame() {
   const resetLevel = useCallback((li) => {
     const g = gs.current;
     g.player = { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true };
-    g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.collectedFlowers = []; g.particles = [];
+    g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.collectedFlowers = []; g.collectedCoins = []; g.coinMuscle = 0; g.particles = [];
     g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.starPowerTimer = 0; g.hulkTimer = 0;
     g.brokenBlocks = []; g.fallingItems = []; g.gameState = "playing"; g.pipeEnterTimer = 0;
     music.setMode("normal");
@@ -1318,6 +1411,20 @@ export default function MarioGame() {
           }
         });
 
+        // Moon coins — permanent growth within level
+        lv.coins?.forEach((coin, i) => {
+          if (g.collectedCoins.includes(i)) return;
+          const dx = p.x + PW / 2 - coin.x, dy = p.y + PH / 2 - coin.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 36) {
+            g.collectedCoins.push(i);
+            g.coinMuscle = Math.min(10, g.coinMuscle + 1);
+            g.score += 5;
+            music.playSFX("coin");
+            for (let j = 0; j < 14; j++) g.particles.push({ x: coin.x, y: coin.y, vx: (Math.random() - 0.5) * 6, vy: (Math.random() - 1.2) * 5, life: 40, maxLife: 40, color: ["#E0C8FF", "#9C27B0", "#CE93D8", "#FFFDE7", "#FFD700"][j % 5] });
+            setUi(prev => ({ ...prev, score: g.score }));
+          }
+        });
+
         g.particles = g.particles.filter(pt => { pt.x += pt.vx; pt.y += pt.vy; pt.life--; return pt.life > 0; });
 
         const total = lv.stars.length + (lv.movingStars ? lv.movingStars.length : 0);
@@ -1441,6 +1548,7 @@ export default function MarioGame() {
 
       lv.mushrooms?.forEach((mush, i) => { if (!g.collectedMushrooms.includes(i)) drawMushroom(ctx, mush.x - 16, mush.y - 17, g.frame); });
       lv.flowers?.forEach((fl, i) => { if (!g.collectedFlowers.includes(i)) drawFlower(ctx, fl.x, fl.y, g.frame); });
+      lv.coins?.forEach((coin, i) => { if (!g.collectedCoins.includes(i)) drawCoin(ctx, coin.x, coin.y, g.frame); });
       lv.stars.forEach((star, i) => { if (!g.collectedStars.includes(i)) drawStar(ctx, star.x, star.y, 15, g.frame); });
       if (lv.movingStars) lv.movingStars.forEach((ms, i) => {
         if (g.collectedMoving.includes(i)) return;
@@ -1465,13 +1573,13 @@ export default function MarioGame() {
       });
 
       if (g.gameState === "playing" || g.gameState === "levelComplete") {
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0, g.hulkTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0, g.hulkTimer > 0, g.coinMuscle);
       } else if (g.gameState === "enteringPipe") {
         ctx.save();
         ctx.beginPath();
         ctx.rect(0, 0, GW, GROUND_Y - PIPE_H + PIPE_CAP_H);
         ctx.clip();
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0, g.hulkTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0, g.hulkTimer > 0, g.coinMuscle);
         ctx.restore();
       }
 
@@ -1479,11 +1587,17 @@ export default function MarioGame() {
       if (g.gameState === "playing" || g.gameState === "levelComplete") {
         const total = lv.stars.length + (lv.movingStars ? lv.movingStars.length : 0);
         const collected = g.collectedStars.length + g.collectedMoving.length;
-        // Big star counter top-left
+        // Star counter top-left
         ctx.fillStyle = "rgba(0,0,0,0.45)"; ctx.beginPath(); ctx.roundRect(10, 8, 180, 44, 12); ctx.fill();
         ctx.font = "bold 26px 'Segoe UI', sans-serif"; ctx.textAlign = "left";
         ctx.fillStyle = "#FFD700";
         ctx.fillText("\u2B50 " + collected + " / " + total, 22, 40);
+        // Moon coin counter below stars
+        const coinTotal = lv.coins ? lv.coins.length : 0;
+        ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.beginPath(); ctx.roundRect(10, 58, 160, 34, 10); ctx.fill();
+        ctx.font = "bold 19px 'Segoe UI', sans-serif";
+        ctx.fillStyle = g.coinMuscle >= 10 ? "#FFD700" : "#CE93D8";
+        ctx.fillText("\uD83C\uDF19 " + g.collectedCoins.length + " / " + coinTotal, 22, 82);
       }
 
       // Score top-right
