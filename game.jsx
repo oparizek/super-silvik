@@ -540,7 +540,9 @@ const LEVELS = [
       { x: 605, y: 157 }, { x: 740, y: 112 }, { x: 115, y: 232 },
       { x: 380, y: 410 },
     ],
-    pipe: { x: 700 },
+    boss: { x: 600, w: 64, h: 54, patrolMin: 460, patrolMax: 686, speed: 1.5, maxHp: 3 },
+    castle: { x: 510, y: 200, w: 230, h: 240 },
+    princess: { x: 612, y: 386 },
   },
 ];
 
@@ -1145,6 +1147,288 @@ function drawPipeIndicator(ctx, x, isActive, frame) {
   ctx.fillText(isActive ? "\u2193" : "\u2715", postX + signW / 2, signY + 16);
 }
 
+// \u2500\u2500\u2500 BOSS / CASTLE / PRINCESS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function drawBowser(ctx, x, y, w, h, dir, frame, hp, maxHp, hurtTimer) {
+  const flash = hurtTimer > 0 && Math.floor(hurtTimer / 4) % 2 === 0;
+  const bob = Math.sin(frame * 0.08) * 1.5;
+  const cx = x + w / 2;
+
+  ctx.save();
+  if (flash) ctx.globalAlpha = 0.5;
+
+  ctx.fillStyle = "rgba(0,0,0,0.35)";
+  ctx.beginPath(); ctx.ellipse(cx, y + h, w * 0.45, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+  const legSwing = Math.sin(frame * 0.18) * 4;
+  ctx.fillStyle = "#EF6C00";
+  ctx.fillRect(cx - 22, y + h - 16, 14, 14 + legSwing * 0.4);
+  ctx.fillRect(cx + 8, y + h - 16, 14, 14 - legSwing * 0.4);
+  ctx.fillStyle = "#FFFFFF";
+  for (let i = 0; i < 3; i++) {
+    const lx = cx - 20 + i * 5;
+    const ly = y + h - 2 + legSwing * 0.4;
+    ctx.beginPath(); ctx.moveTo(lx - 2, ly - 4); ctx.lineTo(lx, ly + 1); ctx.lineTo(lx + 2, ly - 4); ctx.fill();
+    const rx = cx + 10 + i * 5;
+    const ry = y + h - 2 - legSwing * 0.4;
+    ctx.beginPath(); ctx.moveTo(rx - 2, ry - 4); ctx.lineTo(rx, ry + 1); ctx.lineTo(rx + 2, ry - 4); ctx.fill();
+  }
+
+  ctx.fillStyle = "#558B2F";
+  ctx.beginPath();
+  ctx.ellipse(cx - dir * (w * 0.5 + 4), y + h - 16 + bob, 10, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#FFD54F";
+  ctx.beginPath(); ctx.ellipse(cx, y + h * 0.55 + bob, w * 0.32, h * 0.28, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = "#F57F17"; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(cx - 14, y + h * 0.55 + bob); ctx.lineTo(cx + 14, y + h * 0.55 + bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 12, y + h * 0.55 + 6 + bob); ctx.lineTo(cx + 12, y + h * 0.55 + 6 + bob); ctx.stroke();
+
+  ctx.fillStyle = "#2E7D32";
+  ctx.beginPath(); ctx.ellipse(cx, y + h * 0.4 + bob, w * 0.45, h * 0.42, 0, Math.PI, 0); ctx.fill();
+  ctx.fillStyle = "rgba(255,255,255,0.15)";
+  ctx.beginPath(); ctx.ellipse(cx - 6, y + h * 0.3 + bob, w * 0.18, h * 0.12, 0, Math.PI, 0); ctx.fill();
+
+  ctx.fillStyle = "#FFFFFF";
+  ctx.strokeStyle = "#9E9E9E"; ctx.lineWidth = 0.8;
+  for (let i = -2; i <= 2; i++) {
+    const sx = cx + i * (w * 0.18);
+    const sy = y + h * 0.18 + Math.abs(i) * 4 + bob;
+    ctx.beginPath();
+    ctx.moveTo(sx - 5, sy + 6);
+    ctx.lineTo(sx, sy - 6);
+    ctx.lineTo(sx + 5, sy + 6);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+  }
+
+  ctx.fillStyle = "#EF6C00";
+  ctx.beginPath(); ctx.ellipse(cx - w * 0.5 + 4, y + h * 0.55 + bob, 8, 9, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx + w * 0.5 - 4, y + h * 0.55 + bob, 8, 9, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#FFFFFF";
+  ctx.beginPath(); ctx.moveTo(cx - w * 0.5, y + h * 0.62 + bob); ctx.lineTo(cx - w * 0.5 - 4, y + h * 0.7 + bob); ctx.lineTo(cx - w * 0.5 + 2, y + h * 0.66 + bob); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(cx + w * 0.5, y + h * 0.62 + bob); ctx.lineTo(cx + w * 0.5 + 4, y + h * 0.7 + bob); ctx.lineTo(cx + w * 0.5 - 2, y + h * 0.66 + bob); ctx.fill();
+
+  const hx = cx + dir * 14;
+  const hy = y + h * 0.28 + bob;
+  ctx.fillStyle = "#FB8C00";
+  ctx.beginPath(); ctx.ellipse(hx, hy, 16, 13, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#FFB74D";
+  ctx.beginPath(); ctx.ellipse(hx + dir * 10, hy + 4, 8, 6, 0, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = "#FAFAFA";
+  ctx.strokeStyle = "#9E9E9E"; ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.moveTo(hx + dir * -6, hy - 8); ctx.lineTo(hx + dir * -10, hy - 16); ctx.lineTo(hx + dir * -2, hy - 10);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(hx + dir * 6, hy - 8); ctx.lineTo(hx + dir * 10, hy - 16); ctx.lineTo(hx + dir * 2, hy - 10);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  ctx.strokeStyle = "#5D4037"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(hx + dir * 2, hy - 4); ctx.lineTo(hx + dir * 10, hy - 1); ctx.stroke();
+
+  ctx.fillStyle = "#FFFFFF";
+  ctx.beginPath(); ctx.arc(hx + dir * 6, hy + 1, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#D32F2F";
+  ctx.beginPath(); ctx.arc(hx + dir * 7, hy + 1, 1.8, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = "#3E2723";
+  ctx.fillRect(hx + dir * 6, hy + 7, 8 * dir, 3);
+  ctx.fillStyle = "#FFFFFF";
+  ctx.beginPath(); ctx.moveTo(hx + dir * 8, hy + 9); ctx.lineTo(hx + dir * 9, hy + 13); ctx.lineTo(hx + dir * 10, hy + 9); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(hx + dir * 12, hy + 9); ctx.lineTo(hx + dir * 13, hy + 13); ctx.lineTo(hx + dir * 14, hy + 9); ctx.fill();
+
+  ctx.restore();
+
+  if (hp > 0) {
+    const barW = 56, barH = 6;
+    const bx = cx - barW / 2;
+    const by = y - 14;
+    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillRect(bx - 1, by - 1, barW + 2, barH + 2);
+    ctx.fillStyle = "#3E2723";
+    ctx.fillRect(bx, by, barW, barH);
+    ctx.fillStyle = "#E53935";
+    ctx.fillRect(bx, by, barW * (hp / maxHp), barH);
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.fillRect(bx, by, barW * (hp / maxHp), 2);
+  }
+}
+
+function drawCastle(ctx, x, y, w, h, frame, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+
+  const grad = ctx.createRadialGradient(x + w / 2, y + h / 2, 10, x + w / 2, y + h / 2, w);
+  grad.addColorStop(0, "rgba(255,235,150,0.45)");
+  grad.addColorStop(1, "rgba(255,235,150,0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(x - 30, y - 30, w + 60, h + 60);
+
+  const stone = "#9E9E9E";
+  const stoneDark = "#616161";
+
+  ctx.fillStyle = stone;
+  ctx.fillRect(x, y + h * 0.28, w * 0.2, h * 0.72);
+  ctx.fillRect(x + w * 0.8, y + h * 0.28, w * 0.2, h * 0.72);
+  ctx.fillRect(x + w * 0.2, y + h * 0.18, w * 0.6, h * 0.82);
+
+  ctx.strokeStyle = stoneDark; ctx.lineWidth = 1;
+  ctx.strokeRect(x, y + h * 0.28, w * 0.2, h * 0.72);
+  ctx.strokeRect(x + w * 0.8, y + h * 0.28, w * 0.2, h * 0.72);
+  ctx.strokeRect(x + w * 0.2, y + h * 0.18, w * 0.6, h * 0.82);
+
+  ctx.strokeStyle = "rgba(60,60,60,0.4)"; ctx.lineWidth = 0.8;
+  for (let by = y + h * 0.3; by < y + h; by += 18) {
+    ctx.beginPath(); ctx.moveTo(x, by); ctx.lineTo(x + w, by); ctx.stroke();
+  }
+
+  ctx.fillStyle = stone;
+  const towerTops = [
+    { tx: x, tw: w * 0.2, ty: y + h * 0.28 },
+    { tx: x + w * 0.8, tw: w * 0.2, ty: y + h * 0.28 },
+    { tx: x + w * 0.2, tw: w * 0.6, ty: y + h * 0.18 },
+  ];
+  towerTops.forEach(t => {
+    const teeth = 4;
+    const tw = t.tw / (teeth * 2 - 1);
+    for (let i = 0; i < teeth; i++) {
+      ctx.fillRect(t.tx + i * 2 * tw, t.ty - 8, tw, 8);
+    }
+  });
+
+  ctx.fillStyle = "#C62828";
+  ctx.beginPath();
+  ctx.moveTo(x - 4, y + h * 0.28 - 8);
+  ctx.lineTo(x + w * 0.1, y + h * 0.05);
+  ctx.lineTo(x + w * 0.2 + 4, y + h * 0.28 - 8);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x + w * 0.8 - 4, y + h * 0.28 - 8);
+  ctx.lineTo(x + w * 0.9, y + h * 0.05);
+  ctx.lineTo(x + w + 4, y + h * 0.28 - 8);
+  ctx.closePath(); ctx.fill();
+
+  ctx.strokeStyle = "#3E2723"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x + w / 2, y + h * 0.18 - 8); ctx.lineTo(x + w / 2, y - h * 0.05); ctx.stroke();
+  const wave = Math.sin(frame * 0.12) * 3;
+  ctx.fillStyle = "#FF1744";
+  ctx.beginPath();
+  ctx.moveTo(x + w / 2, y - h * 0.05);
+  ctx.lineTo(x + w / 2 + 22, y - h * 0.02 + wave);
+  ctx.lineTo(x + w / 2, y + h * 0.05);
+  ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "#FFD700";
+  ctx.font = "bold 10px sans-serif"; ctx.textAlign = "center";
+  ctx.fillText("\u2605", x + w / 2 + 9, y + h * 0.025 + wave);
+
+  const doorW = w * 0.22, doorH = h * 0.38;
+  const doorX = x + w / 2 - doorW / 2;
+  const doorY = y + h - doorH;
+  ctx.fillStyle = "#3E2723";
+  ctx.beginPath();
+  ctx.moveTo(doorX, doorY + doorH);
+  ctx.lineTo(doorX, doorY + doorH * 0.3);
+  ctx.quadraticCurveTo(doorX + doorW / 2, doorY - doorH * 0.05, doorX + doorW, doorY + doorH * 0.3);
+  ctx.lineTo(doorX + doorW, doorY + doorH);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = "#1B0F08"; ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    const dx = doorX + (doorW / 4) * i;
+    ctx.beginPath(); ctx.moveTo(dx, doorY + doorH * 0.25); ctx.lineTo(dx, doorY + doorH); ctx.stroke();
+  }
+
+  const winGlow = 0.6 + Math.sin(frame * 0.05) * 0.15;
+  ctx.fillStyle = `rgba(255, 213, 79, ${winGlow})`;
+  ctx.shadowColor = "#FFEB3B"; ctx.shadowBlur = 10;
+  ctx.fillRect(x + w * 0.05, y + h * 0.45, w * 0.1, h * 0.08);
+  ctx.fillRect(x + w * 0.05, y + h * 0.62, w * 0.1, h * 0.08);
+  ctx.fillRect(x + w * 0.85, y + h * 0.45, w * 0.1, h * 0.08);
+  ctx.fillRect(x + w * 0.85, y + h * 0.62, w * 0.1, h * 0.08);
+  ctx.fillRect(x + w * 0.45, y + h * 0.32, w * 0.1, h * 0.1);
+  ctx.shadowBlur = 0;
+
+  ctx.restore();
+}
+
+function drawPrincess(ctx, x, y, frame, waving) {
+  const bob = Math.sin(frame * 0.08) * 1.5;
+  const cx = x + 15;
+
+  ctx.save();
+  ctx.shadowColor = "rgba(255,128,171,0.6)"; ctx.shadowBlur = 14;
+
+  ctx.fillStyle = "#F06292";
+  ctx.beginPath();
+  ctx.moveTo(cx - 14, y + 50 + bob);
+  ctx.lineTo(cx - 9, y + 26 + bob);
+  ctx.lineTo(cx + 9, y + 26 + bob);
+  ctx.lineTo(cx + 14, y + 50 + bob);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = "#F8BBD0";
+  ctx.beginPath();
+  ctx.moveTo(cx - 6, y + 50 + bob);
+  ctx.lineTo(cx - 4, y + 28 + bob);
+  ctx.lineTo(cx - 1, y + 28 + bob);
+  ctx.lineTo(cx - 3, y + 50 + bob);
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = "#EC407A";
+  ctx.fillRect(cx - 7, y + 19 + bob, 14, 9);
+
+  const armWave = waving ? Math.sin(frame * 0.25) * 6 : 0;
+  ctx.fillStyle = "#FFE0B2";
+  ctx.beginPath(); ctx.ellipse(cx - 9, y + 22 + bob, 3, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.save();
+  ctx.translate(cx + 9, y + 22 + bob);
+  ctx.rotate(waving ? -0.6 + armWave * 0.05 : 0);
+  ctx.beginPath(); ctx.ellipse(0, waving ? -6 : 0, 3, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = "#FFE0B2";
+  ctx.fillRect(cx - 2, y + 17 + bob, 4, 3);
+  ctx.beginPath(); ctx.arc(cx, y + 11 + bob, 8, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = "#FFD54F";
+  ctx.beginPath(); ctx.arc(cx, y + 7 + bob, 9, Math.PI, 0); ctx.fill();
+  ctx.fillRect(cx - 10, y + 7 + bob, 4, 14);
+  ctx.fillRect(cx + 6, y + 7 + bob, 4, 14);
+  ctx.fillStyle = "#FFF59D";
+  ctx.fillRect(cx - 5, y + 2 + bob, 4, 3);
+
+  ctx.fillStyle = "#FFD700";
+  ctx.beginPath();
+  ctx.moveTo(cx - 7, y + 4 + bob);
+  ctx.lineTo(cx - 7, y + bob);
+  ctx.lineTo(cx - 3, y + 3 + bob);
+  ctx.lineTo(cx, y + bob - 1);
+  ctx.lineTo(cx + 3, y + 3 + bob);
+  ctx.lineTo(cx + 7, y + bob);
+  ctx.lineTo(cx + 7, y + 4 + bob);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = "#FF8F00"; ctx.lineWidth = 0.8; ctx.stroke();
+  ctx.fillStyle = "#E91E63";
+  ctx.beginPath(); ctx.arc(cx, y + 3 + bob, 1.3, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = "#1B1B1B";
+  ctx.beginPath(); ctx.arc(cx - 2.5, y + 11 + bob, 1.2, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 2.5, y + 11 + bob, 1.2, 0, Math.PI * 2); ctx.fill();
+
+  ctx.strokeStyle = "#C2185B"; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(cx, y + 13 + bob, 2, 0, Math.PI); ctx.stroke();
+
+  ctx.fillStyle = "rgba(255,128,171,0.5)";
+  ctx.beginPath(); ctx.arc(cx - 5, y + 13 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 5, y + 13 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
+
+  ctx.restore();
+}
+
 // ─── MAIN COMPONENT ─────────────────────────────────────────────────────
 export default function MarioGame() {
   const canvasRef = useRef(null);
@@ -1157,6 +1441,7 @@ export default function MarioGame() {
     touchLeft: false, touchRight: false, touchJump: false, touchDown: false, musicOn: true,
     pipeEnterTimer: 0,
     fadeInTimer: 0,
+    boss: null, bossDefeatTimer: 0, princessRescued: false, princessRescueTimer: 0,
   });
   const [ui, setUi] = useState({ score: 0, lives: 3, level: 0, gameState: "menu", levelName: "", musicOn: true });
   const [inFullscreen, setInFullscreen] = useState(false);
@@ -1183,6 +1468,20 @@ export default function MarioGame() {
     g.dogs = lvDogs.map(d => ({ ...d, dir: 1, frame: Math.random() * 100, happy: false, happyTimer: 0 }));
     g.petted = [];
     const lv = LEVELS[li];
+    g.boss = null; g.bossDefeatTimer = 0; g.princessRescued = false; g.princessRescueTimer = 0;
+    if (lv.boss) {
+      g.boss = {
+        ...lv.boss,
+        y: GROUND_Y - lv.boss.h,
+        hp: lv.boss.maxHp,
+        alive: true,
+        dir: -1,
+        frame: 0,
+        hurtTimer: 0,
+        flying: false,
+        flyVx: 0, flyVy: 0, flyRot: 0,
+      };
+    }
     if (lv.movingStars) lv.movingStars.forEach(ms => { ms.x = ms.minX + (ms.maxX - ms.minX) / 2; ms.y = ms.minY + (ms.maxY - ms.minY) / 2; });
     setUi({ score: g.score, lives: g.lives, level: li, gameState: "playing", levelName: lv.name, musicOn: g.musicOn });
   }, []);
@@ -1435,9 +1734,93 @@ export default function MarioGame() {
         g.particles = g.particles.filter(pt => { pt.x += pt.vx; pt.y += pt.vy; pt.life--; return pt.life > 0; });
 
         const total = lv.stars.length + (lv.movingStars ? lv.movingStars.length : 0);
-        if (g.collectedStars.length + g.collectedMoving.length >= total) {
+        if (!lv.boss && g.collectedStars.length + g.collectedMoving.length >= total) {
           g.gameState = "levelComplete"; music.playSFX("levelup");
           setUi(prev => ({ ...prev, gameState: "levelComplete", score: g.score }));
+        }
+
+        // Boss fight
+        if (g.boss) {
+          const b = g.boss;
+          b.frame++;
+          if (b.flying) {
+            b.x += b.flyVx; b.y += b.flyVy; b.flyVy += 0.4; b.flyRot += 0.15;
+            if (b.y > GH + 100) b.flying = false;
+          } else if (b.alive) {
+            if (b.hurtTimer > 0) b.hurtTimer--;
+            const moveSpeed = b.hp <= 1 ? b.speed * 1.6 : (b.hp === 2 ? b.speed * 1.25 : b.speed);
+            b.x += moveSpeed * b.dir;
+            if (b.x <= b.patrolMin) { b.x = b.patrolMin; b.dir = 1; }
+            if (b.x >= b.patrolMax) { b.x = b.patrolMax; b.dir = -1; }
+
+            if (p.x + PW > b.x && p.x < b.x + b.w && p.y + PH > b.y && p.y < b.y + b.h) {
+              const stomp = p.vy > 0 && p.y + PH < b.y + b.h * 0.55;
+              if (stomp && b.hurtTimer === 0) {
+                b.hp--;
+                b.hurtTimer = 50;
+                p.vy = JUMP_FORCE * 0.95;
+                music.playSFX("stomp");
+                g.score += 100;
+                setUi(prev => ({ ...prev, score: g.score }));
+                for (let j = 0; j < 16; j++) g.particles.push({ x: b.x + b.w / 2, y: b.y + 6, vx: (Math.random() - 0.5) * 9, vy: (Math.random() - 1.5) * 5, life: 45, maxLife: 45, color: ["#FFD700", "#FF5252", "#FF8A65", "#FFFFFF", "#FFEB3B"][j % 5] });
+                if (b.hp <= 0) {
+                  b.alive = false;
+                  b.flying = true;
+                  b.flyVx = -b.dir * 3;
+                  b.flyVy = -10;
+                  b.flyRot = 0;
+                  music.playSFX("levelup");
+                  g.score += 500;
+                  setUi(prev => ({ ...prev, score: g.score }));
+                  for (let j = 0; j < 36; j++) g.particles.push({ x: b.x + b.w / 2, y: b.y + b.h / 2, vx: (Math.random() - 0.5) * 14, vy: (Math.random() - 0.5) * 14, life: 60, maxLife: 60, color: ["#FFD700", "#FF5252", "#E040FB", "#69F0AE", "#40C4FF", "#FFFFFF", "#FF80AB"][j % 7] });
+                }
+              } else if (g.starPowerTimer > 0 && b.hurtTimer === 0) {
+                b.hp--;
+                b.hurtTimer = 30;
+                music.playSFX("stomp");
+                if (b.hp <= 0) {
+                  b.alive = false; b.flying = true;
+                  b.flyVx = (p.x < b.x ? 1 : -1) * 5; b.flyVy = -10; b.flyRot = 0;
+                  music.playSFX("levelup");
+                  g.score += 500;
+                  setUi(prev => ({ ...prev, score: g.score }));
+                }
+              } else if (!stomp && g.invincibleTimer <= 0 && b.hurtTimer === 0) {
+                g.invincibleTimer = 50;
+                p.vy = -7;
+                p.vx = p.x < b.x + b.w / 2 ? -5 : 5;
+                music.playSFX("hurt");
+              }
+            }
+          }
+
+          if (!b.alive && !b.flying) g.bossDefeatTimer++;
+
+          // Princess rescue
+          if (!b.alive && g.bossDefeatTimer > 70 && lv.princess && !g.princessRescued) {
+            const px = lv.princess.x;
+            const py = lv.princess.y;
+            if (p.x + PW > px - 6 && p.x < px + 36 && p.y + PH > py - 4 && p.y < py + 60) {
+              g.princessRescued = true;
+              g.princessRescueTimer = 0;
+              music.playSFX("levelup");
+              if (g.musicOn) music.setMode("power");
+              for (let j = 0; j < 30; j++) g.particles.push({ x: px + 15, y: py + 20, vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 1.2) * 6, life: 60, maxLife: 60, color: ["#FF80AB", "#F8BBD0", "#FFD700", "#E040FB", "#FFFFFF", "#FF4081"][j % 6] });
+            }
+          }
+
+          if (g.princessRescued) {
+            g.princessRescueTimer++;
+            if (g.princessRescueTimer % 10 === 0 && g.princessRescueTimer < 180) {
+              const px = lv.princess.x + 15;
+              const py = lv.princess.y + 20;
+              for (let j = 0; j < 4; j++) g.particles.push({ x: px + (Math.random() - 0.5) * 60, y: py + (Math.random() - 0.5) * 40, vx: (Math.random() - 0.5) * 4, vy: -Math.random() * 3 - 1, life: 50, maxLife: 50, color: ["#FF80AB", "#FFD700", "#E040FB", "#FFFFFF"][j % 4] });
+            }
+            if (g.princessRescueTimer >= 200) {
+              g.gameState = "gameComplete";
+              setUi(prev => ({ ...prev, gameState: "gameComplete", score: g.score }));
+            }
+          }
         }
       }
 
@@ -1483,6 +1866,12 @@ export default function MarioGame() {
       if (lv.trees) lv.trees.forEach(t => drawTree(ctx, t.x, t.y, t.size, t.variant));
       if (lv.stalactites) lv.stalactites.forEach(s => drawStalactite(ctx, s.x, s.y, s.len));
       if (lv.crystals) lv.crystals.forEach(c => drawCrystal(ctx, c.x, c.y, g.frame));
+
+      // Castle reveals after Bowser is defeated
+      if (lv.castle && g.boss && !g.boss.alive) {
+        const castleAlpha = Math.min(1, g.bossDefeatTimer / 60);
+        if (castleAlpha > 0) drawCastle(ctx, lv.castle.x, lv.castle.y, lv.castle.w, lv.castle.h, g.frame, castleAlpha);
+      }
 
       if (lv.platforms[0] && !lv.stalactites) {
         ctx.fillStyle = "#2d8c1f";
@@ -1572,6 +1961,37 @@ export default function MarioGame() {
           ctx.fillText("\u2764\uFE0F", dog.x + ENEMY_W / 2, dog.y - 10 - Math.sin(dog.frame * 0.1) * 4);
         }
       });
+
+      // Boss
+      if (g.boss && (g.boss.alive || g.boss.flying)) {
+        const b = g.boss;
+        ctx.save();
+        if (b.flying) {
+          ctx.translate(b.x + b.w / 2, b.y + b.h / 2);
+          ctx.rotate(b.flyRot);
+          ctx.translate(-(b.x + b.w / 2), -(b.y + b.h / 2));
+          ctx.globalAlpha = Math.max(0, 1 - Math.abs(b.flyVy) / 30);
+        }
+        drawBowser(ctx, b.x, b.y, b.w, b.h, b.dir, b.frame, b.alive ? b.hp : 0, b.maxHp, b.hurtTimer);
+        ctx.restore();
+      }
+
+      // Princess (after boss defeated)
+      if (g.boss && !g.boss.alive && lv.princess && g.bossDefeatTimer > 30) {
+        const alpha = Math.min(1, (g.bossDefeatTimer - 30) / 60);
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        drawPrincess(ctx, lv.princess.x, lv.princess.y, g.frame, !g.princessRescued);
+        ctx.restore();
+        // Rescue heart bursts
+        if (g.princessRescued && g.princessRescueTimer < 200) {
+          const px = lv.princess.x + 15, py = lv.princess.y + 5;
+          ctx.save();
+          ctx.fillStyle = "#FF4081"; ctx.font = "20px sans-serif"; ctx.textAlign = "center";
+          ctx.fillText("\u2764\uFE0F", px, py - Math.sin(g.princessRescueTimer * 0.15) * 6);
+          ctx.restore();
+        }
+      }
       g.particles.forEach(pt => {
         const maxLife = pt.maxLife || 40;
         ctx.save(); ctx.globalAlpha = pt.life / maxLife;
@@ -1651,6 +2071,25 @@ export default function MarioGame() {
         ctx.fillStyle = "#FFD700"; ctx.font = "bold 19px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
         ctx.fillText("\uD83C\uDF89 V\u00FDbor\u011B! Jdi do trubky! \u2193", GW / 2, 35);
       }
+      // Boss / princess hints (last level)
+      if (g.gameState === "playing" && g.boss) {
+        if (g.boss.alive) {
+          ctx.fillStyle = "rgba(0,0,0,0.55)";
+          ctx.beginPath(); ctx.roundRect(GW / 2 - 195, 8, 390, 44, 12); ctx.fill();
+          ctx.fillStyle = "#FF5252"; ctx.font = "bold 19px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+          ctx.fillText("\uD83D\uDC32 Bowser! Sko\u010D na n\u011Bj 3\u00D7! \uD83E\uDD7E", GW / 2, 35);
+        } else if (!g.princessRescued && g.bossDefeatTimer > 60) {
+          ctx.fillStyle = "rgba(0,0,0,0.55)";
+          ctx.beginPath(); ctx.roundRect(GW / 2 - 195, 8, 390, 44, 12); ctx.fill();
+          ctx.fillStyle = "#FF80AB"; ctx.font = "bold 19px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+          ctx.fillText("\uD83C\uDFF0 Zachra\u0148 princeznu! \uD83D\uDC78", GW / 2, 35);
+        } else if (g.princessRescued) {
+          ctx.fillStyle = "rgba(0,0,0,0.55)";
+          ctx.beginPath(); ctx.roundRect(GW / 2 - 195, 8, 390, 44, 12); ctx.fill();
+          ctx.fillStyle = "#FFD700"; ctx.font = "bold 22px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+          ctx.fillText("\u2764\uFE0F Princezna je v bezpe\u010D\u00ED! \u2764\uFE0F", GW / 2, 36);
+        }
+      }
       if (g.gameState === "gameOver") {
         ctx.fillStyle = "rgba(50,0,0,0.8)"; ctx.fillRect(0, 0, GW, GH);
         ctx.fillStyle = "#FF5252"; ctx.font = "bold 38px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
@@ -1663,11 +2102,33 @@ export default function MarioGame() {
         ctx.fillText("Znovu \uD83D\uDD04", GW / 2, 338);
       }
       if (g.gameState === "gameComplete") {
-        ctx.fillStyle = "rgba(0,0,50,0.75)"; ctx.fillRect(0, 0, GW, GH);
+        const rescued = g.princessRescued;
+        ctx.fillStyle = rescued ? "rgba(80,20,80,0.78)" : "rgba(0,0,50,0.75)";
+        ctx.fillRect(0, 0, GW, GH);
         for (let i = 0; i < 20; i++) {
           const sx = (GW / 20) * i + Math.sin(g.frame * 0.02 + i) * 30;
           const sy = 50 + Math.cos(g.frame * 0.03 + i * 2) * 30 + (i % 3) * 40;
           drawStar(ctx, sx, sy, 6 + (i % 3) * 2, g.frame);
+        }
+        if (rescued) {
+          drawCastle(ctx, GW / 2 - 90, 110, 180, 180, g.frame, 1);
+          drawPlayer(ctx, GW / 2 - 38, 245, true, g.frame, false);
+          drawPrincess(ctx, GW / 2 + 8, 240, g.frame, false);
+          for (let k = 0; k < 4; k++) {
+            const hy = 180 + Math.sin(g.frame * 0.08 + k) * 8;
+            ctx.fillStyle = "#FF4081"; ctx.font = "20px sans-serif"; ctx.textAlign = "center";
+            ctx.fillText("❤️", GW / 2 - 60 + k * 40, hy);
+          }
+          ctx.fillStyle = "#FFD700"; ctx.font = "bold 28px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+          ctx.shadowColor = "#FF4081"; ctx.shadowBlur = 18;
+          ctx.fillText("🏆 Princezna je zachráněna! 🏆", GW / 2, 60);
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = "#FFF"; ctx.font = "20px 'Segoe UI', sans-serif";
+          ctx.fillText("Skóre: " + g.score + " ⭐", GW / 2, 320);
+          ctx.fillStyle = "#FF7043"; ctx.beginPath(); ctx.roundRect(GW / 2 - 100, 345, 200, 44, 22); ctx.fill();
+          ctx.fillStyle = "#FFF"; ctx.font = "bold 18px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
+          ctx.fillText("Hrát znovu 🔄", GW / 2, 373);
+          return animRef.current = requestAnimationFrame(loop);
         }
         ctx.fillStyle = "#FFD700"; ctx.font = "bold 40px 'Segoe UI', sans-serif"; ctx.textAlign = "center";
         ctx.fillText("\uD83C\uDFC6 Jsi ŠAMPION! \uD83C\uDFC6", GW / 2, 220);
