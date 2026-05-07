@@ -369,7 +369,7 @@ const LEVELS = [
     ],
     clouds: [{ x: 100, y: 50, size: 1 }, { x: 350, y: 30, size: 1.3 }, { x: 600, y: 60, size: 0.9 }],
     mushrooms: [{ x: 210, y: 333 }],
-    flowers: [{ x: 200, y: 150 }],
+    flowers: [{ x: 200, y: 150 }, { x: 655, y: 175, type: "spiderMan" }],
     coins: [
       { x: 60, y: 410 }, { x: 190, y: 322 }, { x: 270, y: 410 },
       { x: 390, y: 262 }, { x: 470, y: 410 }, { x: 590, y: 192 },
@@ -433,7 +433,7 @@ const LEVELS = [
       { x: 400, y: 300, dx: 2, dy: 0, minX: 200, maxX: 600, minY: 300, maxY: 300 },
     ],
     mushrooms: [{ x: 445, y: 223 }],
-    flowers: [{ x: 125, y: 180 }],
+    flowers: [{ x: 125, y: 180 }, { x: 665, y: 125, type: "spiderMan" }],
     coins: [
       { x: 115, y: 332 }, { x: 270, y: 272 }, { x: 420, y: 212 },
       { x: 570, y: 272 }, { x: 690, y: 212 }, { x: 325, y: 132 },
