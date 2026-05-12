@@ -359,7 +359,7 @@ const LEVELS = [
       { x: 200, y: 170, w: 120, h: 20, color: "#8B4513" },
       { x: 450, y: 130, w: 100, h: 20, color: "#8B4513", breakable: true, drop: "growMushroom" },
       { x: 650, y: 350, w: 100, h: 20, color: "#8B4513", breakable: true, drop: "shrinkMushroom" },
-      { x: 300, y: 200, w: 100, h: 20, color: "#4a7c3f", breakable: true, drop: "greenMushroom" },
+      { x: 300, y: 200, w: 100, h: 20, color: "#4a7c3f", breakable: true, drop: "warriorMushroom" },
     ],
     stars: [{ x: 190, y: 310 }, { x: 390, y: 250 }, { x: 590, y: 180 }, { x: 240, y: 130 }, { x: 480, y: 90 }, { x: 690, y: 310 }, { x: 100, y: 400 }, { x: 500, y: 400 }],
     eyeExercise: "tracking",
@@ -369,7 +369,7 @@ const LEVELS = [
     ],
     clouds: [{ x: 100, y: 50, size: 1 }, { x: 350, y: 30, size: 1.3 }, { x: 600, y: 60, size: 0.9 }],
     mushrooms: [{ x: 210, y: 333 }],
-    flowers: [{ x: 200, y: 150 }, { x: 655, y: 175, type: "spiderMan" }],
+    flowers: [{ x: 200, y: 150, type: "warrior" }, { x: 655, y: 175, type: "spiderMan" }],
     coins: [
       { x: 60, y: 410 }, { x: 190, y: 322 }, { x: 270, y: 410 },
       { x: 390, y: 262 }, { x: 470, y: 410 }, { x: 590, y: 192 },
@@ -390,7 +390,7 @@ const LEVELS = [
       { x: 520, y: 260, w: 140, h: 20, color: "#5c3d2e" },
       { x: 630, y: 180, w: 140, h: 20, color: "#5c3d2e", breakable: true, drop: "growMushroom" },
       { x: 70, y: 150, w: 140, h: 20, color: "#5c3d2e" },
-      { x: 450, y: 180, w: 100, h: 20, color: "#3d5c2e", breakable: true, drop: "greenMushroom" },
+      { x: 450, y: 180, w: 100, h: 20, color: "#3d5c2e", breakable: true, drop: "warriorMushroom" },
     ],
     stars: [{ x: 80, y: 310 }, { x: 250, y: 260 }, { x: 430, y: 310 }, { x: 340, y: 160 }, { x: 580, y: 220 }, { x: 720, y: 140 }, { x: 130, y: 110 }, { x: 300, y: 400 }, { x: 650, y: 400 }],
     eyeExercise: "saccade",
@@ -400,7 +400,7 @@ const LEVELS = [
     ],
     fireflies: [{ x: 150, y: 100 }, { x: 300, y: 80 }, { x: 500, y: 120 }, { x: 650, y: 90 }, { x: 400, y: 200 }, { x: 100, y: 250 }],
     mushrooms: [{ x: 270, y: 283 }],
-    flowers: [{ x: 75, y: 130 }, { x: 480, y: 160, type: "spiderMan" }],
+    flowers: [{ x: 75, y: 130, type: "warrior" }, { x: 480, y: 160, type: "spiderMan" }],
     coins: [
       { x: 60, y: 322 }, { x: 235, y: 272 }, { x: 140, y: 410 },
       { x: 415, y: 322 }, { x: 315, y: 172 }, { x: 565, y: 232 },
@@ -423,7 +423,7 @@ const LEVELS = [
       { x: 460, y: 120, w: 130, h: 20, color: "#FF69B4", breakable: true, drop: "shrinkMushroom" },
       { x: 120, y: 200, w: 130, h: 20, color: "#FF6B6B" },
       { x: 610, y: 150, w: 140, h: 20, color: "#FFD700" },
-      { x: 520, y: 300, w: 100, h: 20, color: "#66BB6A", breakable: true, drop: "greenMushroom" },
+      { x: 520, y: 300, w: 100, h: 20, color: "#66BB6A", breakable: true, drop: "warriorMushroom" },
     ],
     stars: [{ x: 120, y: 320 }, { x: 270, y: 260 }, { x: 420, y: 200 }, { x: 570, y: 260 }, { x: 700, y: 200 }, { x: 320, y: 120 }, { x: 520, y: 80 }, { x: 170, y: 160 }, { x: 680, y: 110 }, { x: 400, y: 400 }],
     eyeExercise: "convergence",
@@ -433,7 +433,7 @@ const LEVELS = [
       { x: 400, y: 300, dx: 2, dy: 0, minX: 200, maxX: 600, minY: 300, maxY: 300 },
     ],
     mushrooms: [{ x: 445, y: 223 }],
-    flowers: [{ x: 125, y: 180 }, { x: 665, y: 125, type: "spiderMan" }],
+    flowers: [{ x: 125, y: 180, type: "warrior" }, { x: 665, y: 125, type: "spiderMan" }],
     coins: [
       { x: 115, y: 332 }, { x: 270, y: 272 }, { x: 420, y: 212 },
       { x: 570, y: 272 }, { x: 690, y: 212 }, { x: 325, y: 132 },
@@ -455,7 +455,7 @@ const LEVELS = [
       { x: 350, y: 160, w: 110, h: 20, color: "#5c3d2e", breakable: true, drop: "shrinkMushroom" },
       { x: 560, y: 190, w: 100, h: 20, color: "#5c3d2e" },
       { x: 700, y: 140, w: 90, h: 20, color: "#5c3d2e" },
-      { x: 80, y: 260, w: 90, h: 20, color: "#3d5c2e", breakable: true, drop: "greenMushroom" },
+      { x: 80, y: 260, w: 90, h: 20, color: "#3d5c2e", breakable: true, drop: "warriorMushroom" },
     ],
     stars: [
       { x: 120, y: 320 }, { x: 280, y: 270 }, { x: 460, y: 220 }, { x: 630, y: 280 },
@@ -490,7 +490,7 @@ const LEVELS = [
       { x: 450, y: 130 }, { x: 650, y: 160 },
     ],
     mushrooms: [{ x: 135, y: 343 }],
-    flowers: [{ x: 705, y: 120, type: "spiderMan" }, { x: 170, y: 190 }],
+    flowers: [{ x: 705, y: 120, type: "spiderMan" }, { x: 170, y: 190, type: "warrior" }],
     coins: [
       { x: 115, y: 332 }, { x: 285, y: 282 }, { x: 460, y: 232 },
       { x: 640, y: 292 }, { x: 200, y: 182 }, { x: 400, y: 132 },
@@ -512,7 +512,7 @@ const LEVELS = [
       { x: 350, y: 160, w: 110, h: 20, color: "#3d2b1a", breakable: true, drop: "shrinkMushroom" },
       { x: 560, y: 185, w: 100, h: 20, color: "#3d2b1a" },
       { x: 700, y: 140, w: 90, h: 20, color: "#3d2b1a" },
-      { x: 80, y: 260, w: 90, h: 20, color: "#2a1f12", breakable: true, drop: "greenMushroom" },
+      { x: 80, y: 260, w: 90, h: 20, color: "#2a1f12", breakable: true, drop: "warriorMushroom" },
     ],
     stars: [
       { x: 120, y: 330 }, { x: 280, y: 270 }, { x: 460, y: 220 }, { x: 630, y: 280 },
@@ -534,7 +534,7 @@ const LEVELS = [
       { x: 380, y: 0, len: 38 }, { x: 480, y: 0, len: 62 }, { x: 580, y: 0, len: 42 },
       { x: 700, y: 0, len: 50 }, { x: 760, y: 0, len: 35 },
     ],
-    flowers: [{ x: 200, y: 190, type: "spiderMan" }, { x: 570, y: 165 }],
+    flowers: [{ x: 200, y: 190, type: "spiderMan" }, { x: 570, y: 165, type: "warrior" }],
     coins: [
       { x: 115, y: 342 }, { x: 285, y: 282 }, { x: 460, y: 232 },
       { x: 640, y: 292 }, { x: 200, y: 182 }, { x: 400, y: 132 },
@@ -591,48 +591,35 @@ function drawShrinkMushroom(ctx, x, y, frame) {
   ctx.restore();
 }
 
-function drawGreenMushroom(ctx, x, y, frame) {
+function drawWarriorMushroom(ctx, x, y, frame) {
   const bob = Math.sin(frame * 0.06 + x * 0.01) * 3;
   ctx.save();
-  ctx.shadowColor = "rgba(50,200,50,0.6)"; ctx.shadowBlur = 16;
+  ctx.shadowColor = "rgba(180,120,20,0.8)"; ctx.shadowBlur = 18;
   // stem
-  ctx.fillStyle = "#F5DEB3";
+  ctx.fillStyle = "#D4A96A";
   ctx.beginPath(); ctx.roundRect(x + 8, y + 20 + bob, 16, 14, [2, 2, 4, 4]); ctx.fill();
-  ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(x + 10, y + 21 + bob, 12, 2);
-  // cap
-  ctx.fillStyle = "#2E7D32";
+  ctx.fillStyle = "rgba(0,0,0,0.12)"; ctx.fillRect(x + 10, y + 21 + bob, 12, 2);
+  // cap — bronze/gold
+  const capGrad = ctx.createLinearGradient(x, y + 6 + bob, x + 32, y + 20 + bob);
+  capGrad.addColorStop(0, "#CD7F32");
+  capGrad.addColorStop(0.5, "#E8A020");
+  capGrad.addColorStop(1, "#8B4513");
+  ctx.fillStyle = capGrad;
   ctx.beginPath(); ctx.ellipse(x + 16, y + 20 + bob, 18, 14, 0, Math.PI, 0); ctx.fill();
-  ctx.strokeStyle = "#1B5E20"; ctx.lineWidth = 1.5;
+  ctx.strokeStyle = "#7B3F00"; ctx.lineWidth = 1.5;
   ctx.beginPath(); ctx.ellipse(x + 16, y + 20 + bob, 18, 14, 0, Math.PI, 0); ctx.stroke();
-  // white dots
+  // star dots (gold stars instead of white dots)
   ctx.shadowBlur = 0;
-  ctx.fillStyle = "#FFF";
-  ctx.beginPath(); ctx.arc(x + 9, y + 13 + bob, 3.5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(x + 16, y + 8 + bob, 4.5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(x + 23, y + 13 + bob, 3.5, 0, Math.PI * 2); ctx.fill();
-  ctx.restore();
-}
-
-function drawFlower(ctx, x, y, frame) {
-  const bob = Math.sin(frame * 0.07 + x * 0.01) * 3;
-  const cx = x + 16, cy = y + 16 + bob;
-  ctx.save();
-  ctx.shadowColor = "rgba(255,100,200,0.7)"; ctx.shadowBlur = 18;
-  // Stem
-  ctx.strokeStyle = "#388E3C"; ctx.lineWidth = 3; ctx.lineCap = "round";
-  ctx.beginPath(); ctx.moveTo(cx, cy + 6); ctx.lineTo(cx, y + 32 + bob); ctx.stroke();
-  // 6 petals, alternating pink/white
-  const petalColors = ["#FF80AB","#FFFFFF","#FF4081","#FFFFFF","#FF80AB","#FFFFFF"];
-  for (let i = 0; i < 6; i++) {
-    const angle = (i / 6) * Math.PI * 2 + frame * 0.04;
-    const px = cx + Math.cos(angle) * 9, py = cy + Math.sin(angle) * 9;
-    ctx.fillStyle = petalColors[i];
-    ctx.beginPath(); ctx.ellipse(px, py, 6, 4, angle, 0, Math.PI * 2); ctx.fill();
-  }
-  // Yellow center
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = "#FFD700"; ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = "#FF8F00"; ctx.beginPath(); ctx.arc(cx, cy, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#FFD700";
+  ctx.font = "bold 7px sans-serif"; ctx.textAlign = "center";
+  ctx.fillText("★", x + 9, y + 16 + bob);
+  ctx.fillText("★", x + 16, y + 11 + bob);
+  ctx.fillText("★", x + 23, y + 16 + bob);
+  // tiny sword on stem
+  ctx.strokeStyle = "#C0C0C0"; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(x + 16, y + 20 + bob); ctx.lineTo(x + 16, y + 34 + bob); ctx.stroke();
+  ctx.strokeStyle = "#8B4513"; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x + 12, y + 25 + bob); ctx.lineTo(x + 20, y + 25 + bob); ctx.stroke();
   ctx.restore();
 }
 
@@ -672,184 +659,155 @@ function drawCoin(ctx, x, y, frame) {
   ctx.restore();
 }
 
-function drawCaptainAmericaPlayer(ctx, x, y, facingRight, frame, invincible) {
+function drawWarriorPlayer(ctx, x, y, facingRight, frame, invincible) {
   ctx.save();
   const f = facingRight ? 1 : -1;
   const cx = x + PW / 2;
   const bob = Math.sin(frame * 0.15) * 1.5;
+  const armSwing = Math.sin(frame * 0.18) * 7;
 
   if (invincible && Math.floor(frame / 3) % 2 === 0) ctx.globalAlpha = 0.4;
 
   // Ground shadow
-  ctx.fillStyle = "rgba(0,0,0,0.15)";
-  ctx.beginPath(); ctx.ellipse(cx, y + PH, 14, 4, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.beginPath(); ctx.ellipse(cx, y + PH, 17, 5, 0, 0, Math.PI * 2); ctx.fill();
 
-  // ── LEGS: red/white stripes ──
-  ctx.fillStyle = "#D32F2F";
-  ctx.fillRect(cx - 16, y + 32 + bob, 10, 12);
-  ctx.fillRect(cx + 6, y + 32 + bob, 10, 12);
-  // White stripe across both legs
+  // ── LEGS: dark leather pants ──
+  ctx.fillStyle = "#3B1F0A";
+  ctx.fillRect(cx - 14, y + 30 + bob, 11, 14);
+  ctx.fillRect(cx + 3, y + 30 + bob, 11, 14);
+  // metal knee guards
+  ctx.fillStyle = "#999";
+  ctx.fillRect(cx - 14, y + 33 + bob, 11, 5);
+  ctx.fillRect(cx + 3, y + 33 + bob, 11, 5);
+  // spiked belt line
+  ctx.fillStyle = "#7B3F00";
+  ctx.fillRect(cx - 14, y + 29 + bob, 28, 3);
+  for (let s = 0; s < 5; s++) {
+    ctx.fillStyle = "#C0C0C0";
+    ctx.beginPath(); ctx.moveTo(cx - 12 + s * 6, y + 29 + bob); ctx.lineTo(cx - 9 + s * 6, y + 26 + bob); ctx.lineTo(cx - 6 + s * 6, y + 29 + bob); ctx.closePath(); ctx.fill();
+  }
+
+  // ── TORSO: muscular bare chest (tanned) ──
+  ctx.fillStyle = "#C68642";
+  ctx.beginPath(); ctx.roundRect(cx - 13, y + 12 + bob, 26, 19, 4); ctx.fill();
+  // pec highlights
+  ctx.fillStyle = "#D4A05A";
+  ctx.beginPath(); ctx.roundRect(cx - 10, y + 13 + bob, 9, 7, 3); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(cx + 1, y + 13 + bob, 9, 7, 3); ctx.fill();
+  // abs line
+  ctx.strokeStyle = "#A0652A"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(cx, y + 20 + bob); ctx.lineTo(cx, y + 31 + bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 8, y + 23 + bob); ctx.lineTo(cx + 8, y + 23 + bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - 8, y + 27 + bob); ctx.lineTo(cx + 8, y + 27 + bob); ctx.stroke();
+  // shoulder armor pads
+  ctx.fillStyle = "#777";
+  ctx.beginPath(); ctx.roundRect(cx - 18, y + 11 + bob, 8, 7, 2); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(cx + 10, y + 11 + bob, 8, 7, 2); ctx.fill();
+
+  // ── FLAG ARM (side player faces) — carries American flag ──
+  const flagX = cx + f * 14;
+  const flagY = y + 4 + bob - armSwing * 0.15;
+  // arm
+  ctx.fillStyle = "#C68642";
+  ctx.fillRect(cx + (facingRight ? 9 : -14), y + 14 + bob, 5, 14);
+  // flag pole
+  ctx.strokeStyle = "#D4A96A"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(flagX, flagY + 30); ctx.lineTo(flagX, flagY - 6); ctx.stroke();
+  // flag cloth (waving)
+  const wave = Math.sin(frame * 0.12) * 2;
+  const fw = 18, fh = 12;
+  const fpx = flagX + f * 1;
+  // red stripes
+  for (let r = 0; r < 7; r++) {
+    ctx.fillStyle = r % 2 === 0 ? "#B22234" : "#FFFFFF";
+    ctx.beginPath();
+    ctx.moveTo(fpx, flagY - 6 + r * (fh / 7));
+    ctx.lineTo(fpx + f * (fw + wave * (r / 7)), flagY - 6 + r * (fh / 7));
+    ctx.lineTo(fpx + f * (fw + wave * ((r + 1) / 7)), flagY - 6 + (r + 1) * (fh / 7));
+    ctx.lineTo(fpx, flagY - 6 + (r + 1) * (fh / 7));
+    ctx.closePath(); ctx.fill();
+  }
+  // blue canton (top-left of flag)
+  ctx.fillStyle = "#3C3B6E";
+  ctx.fillRect(fpx, flagY - 6, f * fw * 0.45, fh * 0.5);
+  // stars on canton
   ctx.fillStyle = "#FFFFFF";
-  ctx.fillRect(cx - 16, y + 36 + bob, 32, 3);
-  ctx.fillRect(cx - 16, y + 40 + bob, 32, 2);
+  ctx.font = "bold 4px sans-serif"; ctx.textAlign = "center";
+  for (let sr = 0; sr < 2; sr++) for (let sc = 0; sc < 3; sc++) {
+    ctx.fillText("★", fpx + f * (2.5 + sc * 3.5), flagY - 6 + 2.5 + sr * 3);
+  }
+  // flag outline
+  ctx.strokeStyle = "rgba(0,0,0,0.2)"; ctx.lineWidth = 0.5;
+  ctx.strokeRect(fpx, flagY - 6, f * (fw + wave * 0.5), fh);
 
-  // ── TORSO: blue bodysuit ──
-  ctx.fillStyle = "#1565C0";
-  ctx.beginPath(); ctx.roundRect(cx - 11, y + 14 + bob, 22, 18, 3); ctx.fill();
-
-  // White star on chest
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "bold 11px sans-serif"; ctx.textAlign = "center";
-  ctx.fillText("★", cx, y + 27 + bob);
-
-  // ── SHIELD ARM (side player faces) ──
-  const shieldX = cx + f * 16;
-  const shieldY = y + 16 + bob;
-  ctx.fillStyle = "#1565C0";
-  ctx.fillRect(cx + (facingRight ? 9 : -14), shieldY, 5, 10);
-
-  // Shield — concentric circles: blue → white → red → white
-  ctx.beginPath(); ctx.arc(shieldX, shieldY + 6, 10, 0, Math.PI * 2);
-  ctx.fillStyle = "#1565C0"; ctx.fill();
-  ctx.beginPath(); ctx.arc(shieldX, shieldY + 6, 8, 0, Math.PI * 2);
-  ctx.fillStyle = "#FFFFFF"; ctx.fill();
-  ctx.beginPath(); ctx.arc(shieldX, shieldY + 6, 5.5, 0, Math.PI * 2);
-  ctx.fillStyle = "#D32F2F"; ctx.fill();
-  ctx.beginPath(); ctx.arc(shieldX, shieldY + 6, 3, 0, Math.PI * 2);
-  ctx.fillStyle = "#FFFFFF"; ctx.fill();
-  // Shield highlight
-  ctx.fillStyle = "rgba(255,255,255,0.35)";
-  ctx.beginPath(); ctx.arc(shieldX - 2, shieldY + 3, 2.5, 0, Math.PI * 2); ctx.fill();
-
-  // ── FREE ARM (opposite side) ──
-  const arm = Math.sin(frame * 0.2) * 8;
-  ctx.fillStyle = "#1565C0";
-  ctx.fillRect(cx + (facingRight ? -14 : 9), y + 16 + bob + arm * 0.3, 5, 10);
-
-  // ── HEAD: skin face ──
-  ctx.fillStyle = "#FFCC80";
-  ctx.beginPath(); ctx.arc(cx, y + 10 + bob, 11, 0, Math.PI * 2); ctx.fill();
-
-  // ── HELMET: blue cap ──
-  ctx.fillStyle = "#1565C0";
-  ctx.beginPath(); ctx.arc(cx, y + 5 + bob, 11, Math.PI, Math.PI * 2); ctx.fill();
-  // Brow band
-  ctx.fillStyle = "#1976D2";
-  ctx.fillRect(cx - 11, y + 3 + bob, 22, 4);
-  // Side wing
-  ctx.fillStyle = "#BBDEFB";
-  ctx.beginPath();
-  ctx.moveTo(cx + f * 8, y + 2 + bob);
-  ctx.lineTo(cx + f * 15, y - 3 + bob);
-  ctx.lineTo(cx + f * 11, y + 6 + bob);
-  ctx.closePath(); ctx.fill();
-  // "A" on helmet
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "bold 8px sans-serif"; ctx.textAlign = "center";
-  ctx.fillText("A", cx, y + 7 + bob);
-
-  // ── VISOR EYES ──
-  ctx.strokeStyle = "#1A237E"; ctx.lineWidth = 1.2;
-  ctx.fillStyle = "rgba(100,180,255,0.45)";
-  ctx.beginPath(); ctx.roundRect(cx - 10, y + 6 + bob, 9, 5, 2); ctx.fill(); ctx.stroke();
-  ctx.beginPath(); ctx.roundRect(cx + 1, y + 6 + bob, 9, 5, 2); ctx.fill(); ctx.stroke();
-  // Pupils
-  ctx.fillStyle = "#1A237E";
-  ctx.beginPath(); ctx.arc(cx - 5.5, y + 9 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(cx + 5.5, y + 9 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
-
+  // ── SWORD ARM (opposite side) ──
+  ctx.fillStyle = "#C68642";
+  ctx.fillRect(cx + (facingRight ? -14 : 9), y + 14 + bob + armSwing * 0.4, 5, 14);
+  // Sword
+  const sxBase = cx + (facingRight ? -9 : 14);
+  const sy = y + 22 + bob + armSwing * 0.4;
+  const sAngle = facingRight ? -0.5 - armSwing * 0.04 : 0.5 + armSwing * 0.04;
+  ctx.save();
+  ctx.translate(sxBase, sy);
+  ctx.rotate(sAngle);
+  // blade glow
+  ctx.shadowColor = "#87CEFA"; ctx.shadowBlur = 10;
+  ctx.strokeStyle = "#E8E8FF"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -24); ctx.stroke();
+  ctx.strokeStyle = "rgba(255,255,255,0.5)"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(-0.5, 0); ctx.lineTo(-0.5, -22); ctx.stroke();
+  ctx.shadowBlur = 0;
+  // crossguard
+  ctx.fillStyle = "#CD7F32";
+  ctx.fillRect(-6, -3, 12, 3);
+  // grip
+  ctx.fillStyle = "#5C2E00";
+  ctx.fillRect(-2, 0, 4, 7);
   ctx.restore();
-}
 
-function drawHulkPlayer(ctx, x, y, facingRight, frame, invincible) {
-  ctx.save();
-  const f = facingRight ? 1 : -1;
-  const cx = x + PW / 2;
-  const bob = Math.sin(frame * 0.15) * 1.5;
+  // ── HEAD: skin, dark hair, warrior look ──
+  ctx.fillStyle = "#C68642";
+  ctx.beginPath(); ctx.arc(cx, y + 9 + bob, 11, 0, Math.PI * 2); ctx.fill();
+  // dark long hair
+  ctx.fillStyle = "#1A0A00";
+  ctx.beginPath(); ctx.arc(cx, y + 4 + bob, 11, Math.PI, Math.PI * 2); ctx.fill();
+  ctx.fillRect(cx - 11, y + 1 + bob, 22, 5);
+  // hair flowing down sides
+  ctx.beginPath(); ctx.arc(cx - 10, y + 10 + bob, 5, Math.PI * 0.8, Math.PI * 1.8); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 10, y + 10 + bob, 5, Math.PI * 1.2, Math.PI * 0.2); ctx.fill();
+  // headband
+  ctx.fillStyle = "#8B0000";
+  ctx.fillRect(cx - 11, y + 3 + bob, 22, 3);
+  ctx.fillStyle = "#FFD700";
+  ctx.font = "bold 6px sans-serif"; ctx.textAlign = "center";
+  ctx.fillText("★", cx, y + 6 + bob);
 
-  if (invincible && Math.floor(frame / 3) % 2 === 0) ctx.globalAlpha = 0.4;
-
-  // Ground shadow
-  ctx.fillStyle = "rgba(0,0,0,0.18)";
-  ctx.beginPath(); ctx.ellipse(cx, y + PH, 18, 5, 0, 0, Math.PI * 2); ctx.fill();
-
-  // ── LEGS: purple shorts ──
-  ctx.fillStyle = "#6A1B9A";
-  ctx.fillRect(cx - 14, y + 30 + bob, 12, 14);
-  ctx.fillRect(cx + 2, y + 30 + bob, 12, 14);
-  // darker inner line
-  ctx.fillStyle = "#4A148C";
-  ctx.fillRect(cx - 2, y + 30 + bob, 4, 14);
-
-  // ── TORSO: wide green muscular chest ──
-  ctx.fillStyle = "#388E3C";
-  ctx.beginPath(); ctx.roundRect(cx - 16, y + 12 + bob, 32, 20, 4); ctx.fill();
-  // chest highlight
-  ctx.fillStyle = "#43A047";
-  ctx.beginPath(); ctx.roundRect(cx - 12, y + 13 + bob, 10, 8, 3); ctx.fill();
-  ctx.beginPath(); ctx.roundRect(cx + 2, y + 13 + bob, 10, 8, 3); ctx.fill();
-
-  // ── ARMS: thick green ──
-  const armSwing = Math.sin(frame * 0.2) * 8;
-  // left arm
-  ctx.fillStyle = "#43A047";
-  ctx.fillRect(cx - 25, y + 13 + bob + armSwing * 0.3, 10, 16);
-  // left fist
-  ctx.beginPath(); ctx.arc(cx - 20, y + 30 + bob + armSwing * 0.3, 6, 0, Math.PI * 2); ctx.fill();
-  // right arm
-  ctx.fillRect(cx + 15, y + 13 + bob - armSwing * 0.3, 10, 16);
-  // right fist
-  ctx.beginPath(); ctx.arc(cx + 20, y + 30 + bob - armSwing * 0.3, 6, 0, Math.PI * 2); ctx.fill();
-
-  // ── HEAD: large green ──
-  ctx.fillStyle = "#43A047";
-  ctx.beginPath(); ctx.arc(cx, y + 8 + bob, 13, 0, Math.PI * 2); ctx.fill();
-
-  // ── HAIR: black messy ──
-  ctx.fillStyle = "#111111";
-  ctx.beginPath(); ctx.arc(cx, y + 1 + bob, 13, Math.PI, Math.PI * 2); ctx.fill();
-  ctx.fillRect(cx - 13, y - 2 + bob, 26, 5);
-  // messy tufts
-  ctx.beginPath(); ctx.arc(cx - 7 * f, y - 1 + bob, 6, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(cx + 3 * f, y - 3 + bob, 5, 0, Math.PI * 2); ctx.fill();
-
-  // ── ANGRY BROWS ──
-  ctx.strokeStyle = "#1B5E20"; ctx.lineWidth = 3; ctx.lineCap = "round";
-  ctx.beginPath(); ctx.moveTo(cx - 11, y + 5 + bob); ctx.lineTo(cx - 3, y + 7 + bob); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx + 11, y + 5 + bob); ctx.lineTo(cx + 3, y + 7 + bob); ctx.stroke();
-
-  // ── EYES: small angry ──
+  // ── EYES: fierce ──
   ctx.fillStyle = "#FFF";
-  ctx.beginPath(); ctx.arc(cx - 5, y + 9 + bob, 3, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(cx + 5, y + 9 + bob, 3, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = "#1A237E";
-  ctx.beginPath(); ctx.arc(cx - 5 + f * 0.5, y + 9 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(cx + 5 + f * 0.5, y + 9 + bob, 1.5, 0, Math.PI * 2); ctx.fill();
-
-  // ── GRIMACE MOUTH ──
-  ctx.strokeStyle = "#1B5E20"; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(cx - 5, y + 14 + bob); ctx.lineTo(cx + 5, y + 14 + bob); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx - 4.5, y + 9 + bob, 2.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 4.5, y + 9 + bob, 2.5, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = "#1A0A00";
+  ctx.beginPath(); ctx.arc(cx - 4 + f * 0.5, y + 9 + bob, 1.3, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 5 + f * 0.5, y + 9 + bob, 1.3, 0, Math.PI * 2); ctx.fill();
+  // fierce brow
+  ctx.strokeStyle = "#1A0A00"; ctx.lineWidth = 1.8; ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(cx - 7, y + 5 + bob); ctx.lineTo(cx - 2, y + 7 + bob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx + 7, y + 5 + bob); ctx.lineTo(cx + 2, y + 7 + bob); ctx.stroke();
 
   ctx.restore();
 }
 
-function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false, captainAmericaPower = false, starPower = false, hulkPower = false, coinMuscle = 0, spiderManPower = false) {
-  if (hulkPower) {
+function drawPlayer(ctx, x, y, facingRight, frame, invincible, mushroomPower = false, shrinkPower = false, warriorPower = false, starPower = false, unused = false, coinMuscle = 0, spiderManPower = false) {
+  if (warriorPower) {
     const pcx = x + PW / 2, pcy = y + PH / 2;
-    ctx.save(); ctx.translate(pcx, pcy); ctx.scale(2.0, 2.0); ctx.translate(-pcx, -pcy);
-    drawHulkPlayer(ctx, x, y, facingRight, frame, invincible);
+    ctx.save(); ctx.translate(pcx, pcy); ctx.scale(1.8, 1.8); ctx.translate(-pcx, -pcy);
+    drawWarriorPlayer(ctx, x, y, facingRight, frame, invincible);
     ctx.restore();
     return;
   }
   if (spiderManPower) {
     drawSpiderManPlayer(ctx, x, y, facingRight, frame, invincible);
-    return;
-  }
-  if (captainAmericaPower) {
-    const pcx = x + PW / 2, pcy = y + PH / 2;
-    ctx.save(); ctx.translate(pcx, pcy); ctx.scale(1.15, 1.15); ctx.translate(-pcx, -pcy);
-    drawCaptainAmericaPlayer(ctx, x, y, facingRight, frame, invincible);
-    ctx.restore();
     return;
   }
   ctx.save();
@@ -1530,7 +1488,7 @@ export default function MarioGame() {
     player: { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true },
     keys: {}, frame: 0, score: 0, lives: 3, level: 0,
     collectedStars: [], collectedMoving: [], collectedMushrooms: [], collectedFlowers: [], collectedCoins: [], particles: [], enemies: [], dogs: [],
-    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, captainAmericaTimer: 0, starPowerTimer: 0, hulkTimer: 0, spiderManTimer: 0, coinMuscle: 0, gameState: "menu",
+    petted: [], invincibleTimer: 0, mushroomTimer: 0, shrinkTimer: 0, warriorTimer: 0, starPowerTimer: 0, spiderManTimer: 0, coinMuscle: 0, gameState: "menu",
     webs: [],
     brokenBlocks: [], fallingItems: [],
     touchLeft: false, touchRight: false, touchJump: false, touchDown: false, musicOn: true,
@@ -1556,7 +1514,7 @@ export default function MarioGame() {
     const g = gs.current;
     g.player = { x: 50, y: 380, vx: 0, vy: 0, onGround: false, facingRight: true };
     g.level = li; g.collectedStars = []; g.collectedMoving = []; g.collectedMushrooms = []; g.collectedFlowers = []; g.collectedCoins = []; g.coinMuscle = 0; g.particles = [];
-    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.starPowerTimer = 0; g.hulkTimer = 0; g.spiderManTimer = 0; g.webs = [];
+    g.enemies = createEnemies(li); g.invincibleTimer = 0; g.mushroomTimer = 0; g.shrinkTimer = 0; g.warriorTimer = 0; g.starPowerTimer = 0; g.spiderManTimer = 0; g.webs = [];
     g.brokenBlocks = []; g.fallingItems = []; g.gameState = "playing"; g.pipeEnterTimer = 0;
     music.setMode("normal");
     const lvDogs = LEVELS[li].dogs || [];
@@ -1668,12 +1626,8 @@ export default function MarioGame() {
         // Shrink timer
         if (g.shrinkTimer > 0) g.shrinkTimer--;
 
-        // Captain America timer
-        if (g.captainAmericaTimer > 0) { g.captainAmericaTimer--; if (g.captainAmericaTimer === 0) music.setMode("normal"); }
-
         // Star power timer
         if (g.starPowerTimer > 0) g.starPowerTimer--;
-        if (g.hulkTimer > 0) { g.hulkTimer--; if (g.hulkTimer === 0) music.setMode("normal"); }
         if (g.spiderManTimer > 0) { g.spiderManTimer--; if (g.spiderManTimer === 0) music.setMode("normal"); }
 
         // Web projectiles
@@ -1702,20 +1656,20 @@ export default function MarioGame() {
               for (let j = 0; j < 16; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 0.5) * 7, life: 40, color: ["#FFD700", "#FFEB3B", "#FFF176", "#FF8F00"][j % 4] });
               setUi(prev => ({ ...prev, score: g.score }));
             } else if (item.type === "growMushroom") {
-              g.mushroomTimer = 500; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.hulkTimer = 0; g.spiderManTimer = 0;
+              g.mushroomTimer = 500; g.shrinkTimer = 0; g.warriorTimer = 0; g.spiderManTimer = 0;
               music.playSFX("mushroom");
               if (g.musicOn) music.setMode("power");
               for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#D32F2F", "#FF5252", "#FFFFFF", "#FF8A65", "#FFD700"][j % 5] });
             } else if (item.type === "shrinkMushroom") {
-              g.shrinkTimer = 400; g.mushroomTimer = 0; g.captainAmericaTimer = 0; g.hulkTimer = 0; g.spiderManTimer = 0;
+              g.shrinkTimer = 400; g.mushroomTimer = 0; g.warriorTimer = 0; g.spiderManTimer = 0;
               music.playSFX("shrink");
               music.setMode("normal");
               for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#1565C0", "#42A5F5", "#FFFFFF", "#0D47A1", "#29B6F6"][j % 5] });
-            } else if (item.type === "greenMushroom") {
-              g.hulkTimer = 600; g.mushroomTimer = 0; g.shrinkTimer = 0; g.captainAmericaTimer = 0; g.spiderManTimer = 0;
+            } else if (item.type === "warriorMushroom") {
+              g.warriorTimer = 600; g.mushroomTimer = 0; g.shrinkTimer = 0; g.spiderManTimer = 0;
               music.playSFX("mushroom");
               if (g.musicOn) music.setMode("power");
-              for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#43A047", "#66BB6A", "#FFFFFF", "#1B5E20", "#A5D6A7"][j % 5] });
+              for (let j = 0; j < 18; j++) g.particles.push({ x: item.x + 12, y: item.y + 12, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#CD7F32", "#FFD700", "#FFFFFF", "#8B4513", "#E8A020"][j % 5] });
             }
             return false;
           }
@@ -1796,6 +1750,7 @@ export default function MarioGame() {
 
         // Mushroom power-up timer
         if (g.mushroomTimer > 0) { g.mushroomTimer--; if (g.mushroomTimer === 0) music.setMode("normal"); }
+        if (g.warriorTimer > 0) { g.warriorTimer--; if (g.warriorTimer === 0) music.setMode("normal"); }
 
         // Mushroom collection
         lv.mushrooms?.forEach((mush, i) => {
@@ -1803,30 +1758,29 @@ export default function MarioGame() {
           const dx = p.x + PW / 2 - mush.x, dy = p.y + PH / 2 - mush.y;
           if (Math.sqrt(dx * dx + dy * dy) < 40) {
             g.collectedMushrooms.push(i);
-            g.mushroomTimer = 600; g.captainAmericaTimer = 0; g.hulkTimer = 0; g.spiderManTimer = 0;
+            g.mushroomTimer = 600; g.warriorTimer = 0; g.spiderManTimer = 0;
             music.playSFX("mushroom");
             if (g.musicOn) music.setMode("power");
             for (let j = 0; j < 20; j++) g.particles.push({ x: mush.x, y: mush.y, vx: (Math.random() - 0.5) * 7, vy: (Math.random() - 1.5) * 5, life: 50, maxLife: 50, color: ["#D32F2F", "#FF5252", "#FFFFFF", "#FF8A65", "#FFD700"][j % 5] });
           }
         });
 
-        // Flower collection — Captain America or Spider-Man depending on type
+        // Flower/warrior-mushroom collection — Warrior or Spider-Man depending on type
         lv.flowers?.forEach((fl, i) => {
           if (g.collectedFlowers.includes(i)) return;
           const dx = p.x + PW / 2 - (fl.x + 16), dy = p.y + PH / 2 - (fl.y + 16);
           if (Math.sqrt(dx * dx + dy * dy) < 40) {
             g.collectedFlowers.push(i);
             if (fl.type === "spiderMan") {
-              g.spiderManTimer = 600; g.mushroomTimer = 0; g.shrinkTimer = 0; g.hulkTimer = 0; g.captainAmericaTimer = 0;
+              g.spiderManTimer = 600; g.mushroomTimer = 0; g.shrinkTimer = 0; g.warriorTimer = 0;
               music.playSFX("mushroom");
               if (g.musicOn) music.setMode("power");
               for (let j = 0; j < 22; j++) g.particles.push({ x: fl.x + 16, y: fl.y + 16, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 1.5) * 6, life: 55, maxLife: 55, color: ["#CC0000","#1565C0","#FFFFFF","#880000","#4444FF"][j % 5] });
-            } else {
-              g.captainAmericaTimer = 600;
-              g.mushroomTimer = 0; g.shrinkTimer = 0; g.hulkTimer = 0; g.spiderManTimer = 0;
+            } else if (fl.type === "warrior") {
+              g.warriorTimer = 600; g.mushroomTimer = 0; g.shrinkTimer = 0; g.spiderManTimer = 0;
               music.playSFX("mushroom");
               if (g.musicOn) music.setMode("power");
-              for (let j = 0; j < 22; j++) g.particles.push({ x: fl.x + 16, y: fl.y + 16, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 1.5) * 6, life: 55, maxLife: 55, color: ["#FF4081","#FFFFFF","#1565C0","#D32F2F","#FFD700"][j % 5] });
+              for (let j = 0; j < 22; j++) g.particles.push({ x: fl.x + 16, y: fl.y + 16, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 1.5) * 6, life: 55, maxLife: 55, color: ["#CD7F32","#FFD700","#FFFFFF","#B22234","#3C3B6E"][j % 5] });
             }
           }
         });
@@ -2060,11 +2014,11 @@ export default function MarioGame() {
         if (item.type === "star") drawStar(ctx, item.x + 12, item.y + 12, 14, g.frame, true);
         else if (item.type === "growMushroom") drawMushroom(ctx, item.x, item.y, g.frame);
         else if (item.type === "shrinkMushroom") drawShrinkMushroom(ctx, item.x, item.y, g.frame);
-        else if (item.type === "greenMushroom") drawGreenMushroom(ctx, item.x, item.y, g.frame);
+        else if (item.type === "warriorMushroom") drawWarriorMushroom(ctx, item.x, item.y, g.frame);
       });
 
       lv.mushrooms?.forEach((mush, i) => { if (!g.collectedMushrooms.includes(i)) drawMushroom(ctx, mush.x - 16, mush.y - 17, g.frame); });
-      lv.flowers?.forEach((fl, i) => { if (!g.collectedFlowers.includes(i)) { if (fl.type === "spiderMan") drawSpiderFlower(ctx, fl.x, fl.y, g.frame); else drawFlower(ctx, fl.x, fl.y, g.frame); } });
+      lv.flowers?.forEach((fl, i) => { if (!g.collectedFlowers.includes(i)) { if (fl.type === "spiderMan") drawSpiderFlower(ctx, fl.x, fl.y, g.frame); else if (fl.type === "warrior") drawWarriorMushroom(ctx, fl.x, fl.y, g.frame); } });
       lv.coins?.forEach((coin, i) => { if (!g.collectedCoins.includes(i)) drawCoin(ctx, coin.x, coin.y, g.frame); });
       lv.stars.forEach((star, i) => { if (!g.collectedStars.includes(i)) drawStar(ctx, star.x, star.y, 15, g.frame); });
       if (lv.movingStars) lv.movingStars.forEach((ms, i) => {
@@ -2133,13 +2087,13 @@ export default function MarioGame() {
       });
 
       if (g.gameState === "playing" || g.gameState === "levelComplete") {
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0, g.hulkTimer > 0, g.coinMuscle, g.spiderManTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, g.invincibleTimer > 0, g.mushroomTimer > 0, g.shrinkTimer > 0, g.warriorTimer > 0, g.starPowerTimer > 0, false, g.coinMuscle, g.spiderManTimer > 0);
       } else if (g.gameState === "enteringPipe") {
         ctx.save();
         ctx.beginPath();
         ctx.rect(0, 0, GW, GROUND_Y - PIPE_H + PIPE_CAP_H);
         ctx.clip();
-        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.captainAmericaTimer > 0, g.starPowerTimer > 0, g.hulkTimer > 0, g.coinMuscle, g.spiderManTimer > 0);
+        drawPlayer(ctx, g.player.x, g.player.y, g.player.facingRight, g.frame, false, g.mushroomTimer > 0, g.shrinkTimer > 0, g.warriorTimer > 0, g.starPowerTimer > 0, false, g.coinMuscle, g.spiderManTimer > 0);
         ctx.restore();
       }
 
